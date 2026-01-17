@@ -22,6 +22,7 @@ data class SettingModel(
     val showChange: Boolean = false,
     val showCost: Boolean = false,
     val showTotalDiscount: Boolean = false,
+    val showTotalDiscountPercent: Boolean = false,
     val showQrCode: Boolean = false,
     val showAddressOnTicket: Boolean = false,
     val allowCredit: Boolean = false,

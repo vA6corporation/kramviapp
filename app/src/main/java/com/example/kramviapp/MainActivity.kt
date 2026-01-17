@@ -96,6 +96,7 @@ import com.example.kramviapp.posStandard.PosStandardPortraitScreen
 import com.example.kramviapp.products.CreateProductsScreen
 import com.example.kramviapp.products.ProductsScreen
 import com.example.kramviapp.products.ProductsViewModel
+import com.example.kramviapp.proformaItems.ProformaItemsScreen
 import com.example.kramviapp.proformaItems.ProformaItemsViewModel
 import com.example.kramviapp.proformar.ProformarLandscapeScreen
 import com.example.kramviapp.proformar.ProformarPortraitScreen
@@ -569,6 +570,12 @@ class MainActivity : ComponentActivity() {
                                     SaleItemsScreen(
                                         loginViewModel,
                                         saleItemsViewModel,
+                                    )
+                                }
+                                composable("proformaItems") {
+                                    ProformaItemsScreen(
+                                        loginViewModel,
+                                        proformaItemsViewModel,
                                     )
                                 }
                                 composable(

@@ -1,5 +1,6 @@
 package com.example.kramviapp.proformar
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -64,13 +65,13 @@ import com.example.kramviapp.navigation.ConfirmDialog
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.products.ProductDialog
 import com.example.kramviapp.products.ProductsViewModel
-import com.example.kramviapp.proformaItems.ProformaItemBottomSheet
 import com.example.kramviapp.proformaItems.ProformaItemsDialog
 import com.example.kramviapp.proformaItems.ProformaItemsViewModel
 import com.example.kramviapp.ui.theme.LightBlue
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@SuppressLint("DefaultLocale")
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ProformarPortraitScreen(
@@ -102,7 +103,7 @@ fun ProformarPortraitScreen(
     var proformaItemIndex by remember { mutableIntStateOf(0) }
     var selectedProduct: ProductModel? by remember { mutableStateOf(null) }
     var showProformaItemsDialog by remember { mutableStateOf(false) }
-    var showBottomSheet by remember { mutableStateOf(false) }
+    //var showBottomSheet by remember { mutableStateOf(false) }
     var showConfirmDialog by remember { mutableStateOf(false) }
     var showProductDialog by remember { mutableStateOf(false) }
     var expandedPriceList by remember { mutableStateOf(false) }
@@ -179,16 +180,7 @@ fun ProformarPortraitScreen(
             }
         )
     }
-    if (showBottomSheet) {
-        ProformaItemBottomSheet(proformaItems = proformaItems) {
-            if (it == null) {
-                showBottomSheet = false
-            } else {
-                proformaItemIndex = it
-                showProformaItemsDialog = true
-            }
-        }
-    }
+
     if (showConfirmDialog) {
         ConfirmDialog(
             onDismissRequest = {
@@ -226,7 +218,9 @@ fun ProformarPortraitScreen(
                         modifier = Modifier
                             .height(55.dp)
                             .fillMaxWidth(0.5f)
-                            .clickable { showBottomSheet = true },
+                            .clickable {
+                                navigationViewModel.onNavigateTo(NavigateTo("proformaItems"))
+                            },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(Modifier.padding(12.dp, 0.dp)) {
@@ -288,7 +282,7 @@ fun ProformarPortraitScreen(
             }
         } else {
             Row(modifier = Modifier.clickable {
-                showBottomSheet = true
+                navigationViewModel.onNavigateTo(NavigateTo("proformaItems"))
             }) {
                 Row(
                     modifier = Modifier

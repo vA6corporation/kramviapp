@@ -37,7 +37,8 @@ class ChargeViewModel: ViewModel() {
     private val _payments: MutableStateFlow<List<CreatePaymentModel>> = MutableStateFlow(listOf())
     val payments = _payments.asStateFlow()
     fun setPayments(payments: List<CreatePaymentModel>) { _payments.value = payments }
-    fun setDues(dues: List<CreateDueModel>) { _dues.value = dues }
+
+  //fun setDues(dues: List<CreateDueModel>) { _dues.value = dues }
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(BuildConfig.BASE_URL)

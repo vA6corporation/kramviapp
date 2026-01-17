@@ -96,6 +96,7 @@ fun ChargeProformaPortraitScreen(
     var proformaItemIndex by remember { mutableIntStateOf(0) }
     var currencyCode by remember { mutableStateOf(setting.defaultCurrencyCode) }
     var discount by remember { mutableStateOf("") }
+    var discountPercent by remember { mutableStateOf("") }
     var observations by remember { mutableStateOf("") }
     var savedProforma: ProformaModel? by remember { mutableStateOf(null) }
     var isEnabledSave by remember { mutableStateOf(true) }
@@ -104,13 +105,25 @@ fun ChargeProformaPortraitScreen(
 
     var charge = 0.0
     var countProducts = 0.0
+
     for (proformaItem in proformaItems) {
         if (proformaItem.igvCode != IgvCodeType.BONIFICACION) {
             charge += proformaItem.price * proformaItem.quantity
         }
         countProducts += proformaItem.quantity
     }
-    charge -= if (discount.isNotEmpty()) discount.toDouble() else 0.0
+
+    try {
+        if (discountPercent.isNotEmpty()) {
+            val tmpDiscount = (charge / 100) * discountPercent.toDouble()
+            charge -= tmpDiscount
+            discount = tmpDiscount.toString()
+        } else {
+            charge -= if (discount.isNotEmpty()) discount.toDouble() else 0.0
+        }
+    } catch (e: Exception) {
+
+    }
 
     clickMenu?.let {
         navigationViewModel.setClickMenu(null)
@@ -247,7 +260,7 @@ fun ChargeProformaPortraitScreen(
     }
     Column {
         Row(modifier = Modifier.clickable {
-            showProformaItemBottomSheet = true
+            navigationViewModel.onNavigateTo(NavigateTo("proformaItems"))
         }) {
             Row(
                 modifier = Modifier
@@ -351,6 +364,41 @@ fun ChargeProformaPortraitScreen(
                     onValueChange = { discount = it },
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text(text = "Descuento global") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    maxLines = 1,
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+
+            if (setting.showTotalDiscountPercent) {
+                TextField(
+                    value = discountPercent,
+                    onValueChange = {
+                        discountPercent = it
+                        charge = 0.0
+                        discount = ""
+
+                        for (proformaItem in proformaItems) {
+                            if (proformaItem.igvCode != IgvCodeType.BONIFICACION) {
+                                charge += proformaItem.price * proformaItem.quantity
+                            }
+                        }
+
+                        try {
+                            if (discountPercent.isNotEmpty()) {
+                                val tmpDiscount = (charge / 100) * discountPercent.toDouble()
+                                charge -= tmpDiscount
+                                discount = tmpDiscount.toString()
+                            } else {
+                                charge -= if (discount.isNotEmpty()) discount.toDouble() else 0.0
+                            }
+                        } catch (e: Exception) {
+
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text(text = "Descuento global (Porcentaje)") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
                     maxLines = 1,

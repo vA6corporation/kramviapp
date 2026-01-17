@@ -119,6 +119,7 @@ fun ChargeLandscapeScreen(
     var currencyCode by remember { mutableStateOf(setting.defaultCurrencyCode) }
     var workerId by remember { mutableStateOf("") }
     var discount by remember { mutableStateOf("") }
+    var discountPercent by remember { mutableStateOf("") }
     var observations by remember { mutableStateOf("") }
     var cash by remember { mutableStateOf("") }
     var cashChange by remember { mutableStateOf("") }
@@ -131,12 +132,24 @@ fun ChargeLandscapeScreen(
     var isEnabledSave by remember { mutableStateOf(false) }
 
     var charge = 0.0
+
     for (saleItem in saleItems) {
         if (saleItem.igvCode != IgvCodeType.BONIFICACION) {
             charge += saleItem.price * saleItem.quantity
         }
     }
-    charge -= if (discount.isNotEmpty()) discount.toDouble() else 0.0
+
+    try {
+        if (discountPercent.isNotEmpty()) {
+            val tmpDiscount = (charge / 100) * discountPercent.toDouble()
+            charge -= tmpDiscount
+            discount = tmpDiscount.toString()
+        } else {
+            charge -= if (discount.isNotEmpty()) discount.toDouble() else 0.0
+        }
+    } catch (e: Exception) {
+
+    }
 
     clickMenu?.let {
         navigationViewModel.setClickMenu(null)
@@ -551,6 +564,41 @@ fun ChargeLandscapeScreen(
                             onValueChange = { discount = it },
                             modifier = Modifier.fillMaxWidth(),
                             label = { Text(text = "Descuento global") },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            singleLine = true,
+                            maxLines = 1,
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+
+                    if (setting.showTotalDiscountPercent) {
+                        TextField(
+                            value = discountPercent,
+                            onValueChange = {
+                                discountPercent = it
+                                charge = 0.0
+                                discount = ""
+
+                                for (saleItem in saleItems) {
+                                    if (saleItem.igvCode != IgvCodeType.BONIFICACION) {
+                                        charge += saleItem.price * saleItem.quantity
+                                    }
+                                }
+
+                                try {
+                                    if (discountPercent.isNotEmpty()) {
+                                        val tmpDiscount = (charge / 100) * discountPercent.toDouble()
+                                        charge -= tmpDiscount
+                                        discount = tmpDiscount.toString()
+                                    } else {
+                                        charge -= if (discount.isNotEmpty()) discount.toDouble() else 0.0
+                                    }
+                                } catch (e: Exception) {
+
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            label = { Text(text = "Descuento global (Porcentaje)") },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             singleLine = true,
                             maxLines = 1,
