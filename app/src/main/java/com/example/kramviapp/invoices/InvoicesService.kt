@@ -1,0 +1,37 @@
+package com.example.kramviapp.invoices
+
+import com.example.kramviapp.models.CdrModel
+import com.example.kramviapp.models.SaleModel
+import com.example.kramviapp.models.TicketModel
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
+import retrofit2.Call
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.Path
+
+interface InvoicesService {
+
+    @GET("sales/salesOfTheDay/{date}")
+    fun getSalesOfTheDay(
+        @Path("date") date: String
+    ): Call<List<SaleModel>>
+
+    @GET("invoices/send/{saleId}")
+    fun getSendInvoice(
+        @Path("saleId") saleId: Int,
+    ): Call<CdrModel>
+
+    @DELETE("sales/{saleId}/{deletedReason}")
+    fun deleteSale(
+        @Path("saleId") saleId: Int,
+        @Path("deletedReason") deletedReason: String
+    ): Call<Unit>
+
+    @DELETE("tickets/invoice/{saleId}/{deletedReason}")
+    fun deleteInvoice(
+        @Path("saleId") saleId: Int,
+        @Path("deletedReason") deletedReason: String
+    ): Call<TicketModel>
+
+}
