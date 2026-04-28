@@ -232,30 +232,30 @@ class PrinterInvoice80(
                 .append(String.format("%.2f", diff)).append("\n")
         }
 
-        if (sale.invoiceCode != InvoiceCode.NOTA_DE_VENTA) {
-            val qr = StringBuilder()
-            qr.append(business.ruc)
-                .append("|")
-                .append(sale.invoiceName)
-                .append("|")
-                .append(sale.invoicePrefix)
-                .append(office.serialPrefix)
-                .append("|")
-                .append(sale.invoiceNumber)
-                .append("|")
-                .append(String.format("%.2f", sale.igv))
-                .append("|")
-                .append(String.format("%.2f", sale.charge))
-                .append("|")
-                .append(formatDate(sale.createdAt))
-            if (customer != null) {
-                qr.append("|")
-                    .append(customer.documentType)
-                    .append("|")
-                    .append(customer.document)
-            }
-            body.append("[C]<qrcode size='20'>").append(qr).append("</qrcode>").append("\n")
-        }
+//        if (sale.invoiceCode != InvoiceCode.NOTA_DE_VENTA) {
+//            val qr = StringBuilder()
+//            qr.append(business.ruc)
+//                .append("|")
+//                .append(sale.invoiceName)
+//                .append("|")
+//                .append(sale.invoicePrefix)
+//                .append(office.serialPrefix)
+//                .append("|")
+//                .append(sale.invoiceNumber)
+//                .append("|")
+//                .append(String.format("%.2f", sale.igv))
+//                .append("|")
+//                .append(String.format("%.2f", sale.charge))
+//                .append("|")
+//                .append(formatDate(sale.createdAt))
+//            if (customer != null) {
+//                qr.append("|")
+//                    .append(customer.documentType)
+//                    .append("|")
+//                    .append(customer.document)
+//            }
+//            body.append("[C]<qrcode size='20'>").append(qr).append("</qrcode>").append("\n")
+//        }
 
         when (sale.invoiceCode) {
             InvoiceCode.FACTURA -> {

@@ -7,6 +7,6 @@ data class SummarySaleItemModel(
     val cost: Double,
     val totalQuantity: Double,
     val totalBonus: Double,
-    val totalSale: Double,
+    val totalCharge: Double,
     val totalPurchase: Double,
 )

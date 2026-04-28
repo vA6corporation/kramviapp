@@ -1,6 +1,5 @@
-package com.example.kramviapp.posFastFood
+package com.example.kramviapp.posFood
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -119,13 +118,36 @@ fun PosFastFoodLandscapeScreen(
     onSearch?.let {
         navigationViewModel.search(null)
         navigationViewModel.loadBarStart()
+        productsViewModel.getProductsByKey(
+            it,
+            onResponse = { products ->
+                scope.launch {
+                    productsViewModel.setProducts(products)
+                    navigationViewModel.loadBarFinish()
+                    pagerState.scrollToPage(1)
+                    selectedTabIndex = 1
+
+                    for (product in products) {
+                        if (product.sku == it || product.upc == it) {
+                            saleItemsViewModel.addSaleItem(product)
+                        }
+                    }
+                }
+            },
+            onFailure = { message ->
+                navigationViewModel.showMessage(message)
+                navigationViewModel.loadBarFinish()
+            }
+        )
     }
+
     clickMenu?.let {
         navigationViewModel.setClickMenu(null)
         if (it == "search") {
             navigationViewModel.showSearch()
         }
     }
+
     if (showSaleItemsDialog) {
         SaleItemsDialog(
             saleItems[saleItemIndex],

@@ -59,9 +59,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.kramviapp.boards.BoardsViewModel
+import com.example.kramviapp.boards.DeleteBoardDialog
 import com.example.kramviapp.boards.TablesViewModel
 import com.example.kramviapp.categories.CategoriesViewModel
-import com.example.kramviapp.charge.OutStockDialog
 import com.example.kramviapp.enums.IgvCodeType
 import com.example.kramviapp.enums.PriceType
 import com.example.kramviapp.enums.PrintZoneType
@@ -71,7 +71,6 @@ import com.example.kramviapp.models.ActionModel
 import com.example.kramviapp.models.BoardItemModel
 import com.example.kramviapp.models.BoardModel
 import com.example.kramviapp.models.NavigateTo
-import com.example.kramviapp.models.OutStockModel
 import com.example.kramviapp.models.ProductModel
 import com.example.kramviapp.models.SaleItemModel
 import com.example.kramviapp.models.TableModel
@@ -140,12 +139,10 @@ fun PosBoardLandscapeScreen(
     var board: BoardModel? by remember { mutableStateOf(null) }
     var expandedPriceList by remember { mutableStateOf(false) }
     var priceListId by remember { mutableStateOf(setting.defaultPriceListId) }
-    var showOutStockDialog by remember { mutableStateOf(false) }
     var showPasswordBoardDialog by remember { mutableStateOf(false) }
     var showPasswordBoardItemDialog by remember { mutableStateOf(false) }
     var showPasswordUpdateBoardItemDialog by remember { mutableStateOf(false) }
     var showSelectionAnnotationsDialog by remember { mutableStateOf(false) }
-    var outStocks: List<OutStockModel> by remember { mutableStateOf(listOf()) }
     var printers: List<PrinterModel> by remember { mutableStateOf(listOf()) }
 
     ProductsViewModel.setPrices(products, priceListId, office, setting)
@@ -434,21 +431,7 @@ fun PosBoardLandscapeScreen(
             setting = setting,
             onSuccessRequest = {
                 showPasswordBoardDialog = false
-                board?.let { board ->
-                    navigationViewModel.loadBarStart()
-                    boardsViewModel.deleteBoard(
-                        board.id,
-                        onResponse = {
-                            navigationViewModel.loadBarFinish()
-                            navigationViewModel.onNavigateTo(NavigateTo("boards"))
-                            navigationViewModel.showMessage("Mesa anulada correctamente")
-                        },
-                        onFailure = {
-                            navigationViewModel.loadBarFinish()
-                            navigationViewModel.showMessage(it)
-                        }
-                    )
-                }
+                showConfirmBoardDialog = true
             },
             onDismissRequest = {
                 showPasswordBoardDialog = false
@@ -533,12 +516,6 @@ fun PosBoardLandscapeScreen(
         }
     }
 
-    if (showOutStockDialog) {
-        OutStockDialog(outStocks = outStocks) {
-            showOutStockDialog = false
-        }
-    }
-
     if (showBoardItemDialog) {
         val boardItem = boardItems[boardItemIndex]
         BoardItemDialog(
@@ -571,15 +548,13 @@ fun PosBoardLandscapeScreen(
 
     if (showConfirmBoardDialog) {
         board?.let { board ->
-            ConfirmDialog(
-                onDismissRequest = {
-                    showConfirmBoardDialog = false
-                },
-                onConfirmation = {
+            DeleteBoardDialog(
+                onSuccessRequest = { observation ->
                     showConfirmBoardDialog = false
                     navigationViewModel.loadBarStart()
                     boardsViewModel.deleteBoard(
                         board.id,
+                        observation,
                         onResponse = {
                             navigationViewModel.loadBarFinish()
                             navigationViewModel.onNavigateTo(NavigateTo("boards"))
@@ -591,7 +566,9 @@ fun PosBoardLandscapeScreen(
                         }
                     )
                 },
-                dialogText = "Esta seguro de anular la mesa?..."
+                onDismissRequest = {
+                    showConfirmBoardDialog = false
+                }
             )
         }
     }
@@ -937,6 +914,7 @@ fun PosBoardLandscapeScreen(
                                         fullName = boardItem.fullName,
                                         price = boardItem.price,
                                         quantity = boardItem.quantity,
+                                        cost = boardItem.cost,
                                         igvCode = boardItem.igvCode,
                                         preIgvCode = boardItem.igvCode,
                                         unitCode = boardItem.unitCode,

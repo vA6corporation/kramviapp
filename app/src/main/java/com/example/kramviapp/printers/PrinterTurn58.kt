@@ -1,5 +1,6 @@
 package com.example.kramviapp.printers
 
+import android.annotation.SuppressLint
 import com.dantsu.escposprinter.EscPosPrinter
 import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections
 import com.dantsu.escposprinter.connection.tcp.TcpConnection
@@ -22,6 +23,7 @@ class PrinterTurn58(
     private val user: UserModel,
 ) {
     private var printTries = 0
+    @SuppressLint("DefaultLocale")
     private fun buildBody(): StringBuilder {
         val body = java.lang.StringBuilder()
         val totalCollected = 0.0
@@ -76,7 +78,7 @@ class PrinterTurn58(
         for (summarySaleItem in summarySaleItems) {
             body.append("[L]").append(summarySaleItem.fullName.uppercase()).append("\n")
             body.append("[L]").append(summarySaleItem.totalQuantity).append("[R]")
-                .append(String.format("%.2f", summarySaleItem.totalSale))
+                .append(String.format("%.2f", summarySaleItem.totalCharge))
                 .append("\n")
         }
 

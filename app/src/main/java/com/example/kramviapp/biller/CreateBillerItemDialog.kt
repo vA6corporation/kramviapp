@@ -38,13 +38,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.kramviapp.enums.IgvCodeType
 import com.example.kramviapp.login.LoginViewModel
-import com.example.kramviapp.models.BillerItemModel
+import com.example.kramviapp.models.ProductItemModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateBillerItemDialog(
     loginViewModel: LoginViewModel,
-    onDismissRequest: (BillerItemModel?) -> Unit,
+    onDismissRequest: (ProductItemModel?) -> Unit,
 ) {
     val setting by loginViewModel.setting.collectAsState()
     Dialog(onDismissRequest = { onDismissRequest(null) }) {
@@ -190,7 +190,7 @@ fun CreateBillerItemDialog(
                                 isValidPrice = false
                             }
                             if (fullName.isNotEmpty() && quantity.isNotEmpty() && price.isNotEmpty()) {
-                                val billerItem = BillerItemModel(
+                                val billerItem = ProductItemModel(
                                     fullName = fullName,
                                     price = price.toDouble(),
                                     quantity = quantity.toDouble(),

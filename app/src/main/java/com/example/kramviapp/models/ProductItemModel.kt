@@ -2,8 +2,9 @@ package com.example.kramviapp.models
 
 import com.example.kramviapp.enums.IgvCodeType
 
-data class OutStockModel(
-    val productId: Int,
+data class ProductItemModel(
     val fullName: String,
-    val stock: Double,
+    val price: Double,
+    val quantity: Double,
+    val igvCode: IgvCodeType,
 )

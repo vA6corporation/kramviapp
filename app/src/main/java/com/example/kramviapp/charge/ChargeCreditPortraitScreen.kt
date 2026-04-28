@@ -56,7 +56,6 @@ import com.example.kramviapp.models.CreateDueModel
 import com.example.kramviapp.models.CreateSaleModel
 import com.example.kramviapp.models.CreateTurnModel
 import com.example.kramviapp.models.NavigateTo
-import com.example.kramviapp.models.OutStockModel
 import com.example.kramviapp.models.SaleModel
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.openTurn.OpenTurnDialog
@@ -105,8 +104,6 @@ fun ChargeCreditPortraitScreen(
     var showEditCustomerDialog by remember { mutableStateOf(false) }
     var showOpenTurnDialog by remember { mutableStateOf(false) }
     var showInitPaymentsDialog by remember { mutableStateOf(false) }
-    var showOutStockDialog by remember { mutableStateOf(false) }
-    var outStocks: List<OutStockModel> by remember { mutableStateOf(listOf()) }
     var printers: List<PrinterModel> by remember { mutableStateOf(listOf()) }
 
     var saleItemIndex by remember { mutableIntStateOf(0) }
@@ -204,11 +201,6 @@ fun ChargeCreditPortraitScreen(
                     navigationViewModel.onNavigateTo(NavigateTo(navigateTo, true))
                 }
             )
-        }
-    }
-    if (showOutStockDialog) {
-        OutStockDialog(outStocks = outStocks) {
-            showOutStockDialog = false
         }
     }
     if (showInitPaymentsDialog) {
@@ -598,6 +590,7 @@ fun ChargeCreditPortraitScreen(
                             payments,
                             dues,
                             boardId,
+                            setting.isAvailableStock,
                             onResponse = {
                                 savedSale = it
                                 navigationViewModel.loadSpinnerFinish()

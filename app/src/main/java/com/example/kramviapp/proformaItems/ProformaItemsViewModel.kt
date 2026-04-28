@@ -22,6 +22,7 @@ class ProformaItemsViewModel: ViewModel() {
         val proformaItem = ProformaItemModel(
             product.fullName,
             product.price,
+            product.cost,
             1.0,
             product.igvCode,
             product.igvCode,

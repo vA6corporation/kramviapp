@@ -5,20 +5,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -26,13 +20,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import com.example.kramviapp.charge.ChargeViewModel
 import com.example.kramviapp.enums.InvoiceCode
 import com.example.kramviapp.incidents.IncidentsViewModel
 import com.example.kramviapp.login.LoginViewModel
@@ -55,17 +49,14 @@ import com.example.kramviapp.ui.theme.KramviRed
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
-import java.text.SimpleDateFormat
-import java.util.Date
 
-@SuppressLint("SimpleDateFormat")
+@SuppressLint("SimpleDateFormat", "DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InventoriesScreen(
     productsViewModel: ProductsViewModel,
     navigationViewModel: NavigationViewModel,
     incidentsViewModel: IncidentsViewModel,
-    chargeViewModel: ChargeViewModel,
     loginViewModel: LoginViewModel,
 ) {
     val context = LocalContext.current
@@ -77,7 +68,7 @@ fun InventoriesScreen(
     val clickMenu by navigationViewModel.clickMenu.collectAsState()
     var pageIndex by remember { mutableIntStateOf(0) }
     val pageSize by remember { mutableIntStateOf(20) }
-    var products: List<ProductModel> by remember { mutableStateOf(listOf()) }
+    var products: MutableList<ProductModel> = remember { mutableStateListOf() }
     var upc by remember { mutableStateOf("") }
     var showProductBottomSheet by remember { mutableStateOf(false) }
     var showAddStockDialog by remember { mutableStateOf(false) }
@@ -85,6 +76,7 @@ fun InventoriesScreen(
     var showPurchaseStockDialog by remember { mutableStateOf(false) }
     var showTrackearProductsBottomSheet by remember { mutableStateOf(false) }
     var selectedProduct: ProductModel? by remember { mutableStateOf(null) }
+    var selectedProductIndex by remember { mutableIntStateOf(0) }
     var showPasswordPurchaseStockDialog by remember { mutableStateOf(false) }
     var showPasswordAddStockDialog by remember { mutableStateOf(false) }
     var showPasswordRemoveStockDialog by remember { mutableStateOf(false) }
@@ -96,7 +88,10 @@ fun InventoriesScreen(
             it,
             onResponse = { foundProducts ->
                 navigationViewModel.loadBarFinish()
-                products = foundProducts
+                //products = foundProducts.toMutableList()
+                isFinish = true
+                products.clear()
+                products.addAll(foundProducts)
             },
             onFailure = { message ->
                 navigationViewModel.loadBarFinish()
@@ -127,7 +122,7 @@ fun InventoriesScreen(
                             productsViewModel.getProductsByKey(
                                 it,
                                 onResponse = { foundProducts ->
-                                    products = foundProducts
+                                    products.addAll(foundProducts)
                                     navigationViewModel.loadBarFinish()
                                 },
                                 onFailure = { message ->
@@ -234,6 +229,7 @@ fun InventoriesScreen(
                     val incident = CreateIncidentModel(stock.observation)
                     val incidentItem = CreateIncidentItemModel(
                         stock.quantity,
+                        product.price,
                         product.cost,
                         product.unitCode,
                         product.id
@@ -243,7 +239,7 @@ fun InventoriesScreen(
                         incident,
                         listOf(incidentItem),
                         onResponse = {
-                            product.stock += stock.quantity
+                            products[selectedProductIndex] = product.copy(stock = product.stock + stock.quantity)
                             navigationViewModel.showMessage("Se han guardado los cambios")
                             navigationViewModel.loadBarFinish()
                         },
@@ -264,6 +260,7 @@ fun InventoriesScreen(
                     val incident = CreateIncidentModel(stock.observation)
                     val incidentItem = CreateIncidentItemModel(
                         stock.quantity,
+                        product.price,
                         product.cost,
                         product.unitCode,
                         product.id
@@ -273,7 +270,7 @@ fun InventoriesScreen(
                         incident,
                         listOf(incidentItem),
                         onResponse = {
-                            product.stock -= stock.quantity
+                            products[selectedProductIndex] = product.copy(stock = product.stock - stock.quantity)
                             navigationViewModel.showMessage("Se han guardado los cambios")
                             navigationViewModel.loadBarFinish()
                         },
@@ -288,20 +285,14 @@ fun InventoriesScreen(
 
     if (showPurchaseStockDialog) {
         selectedProduct?.let { product ->
-            PurchaseStockDialog(
-                chargeViewModel,
-            ) { stock ->
+            PurchaseStockDialog { stock ->
                 showPurchaseStockDialog = false
                 stock?.let {
-                    val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
-                    val currentDate = sdf.format(Date())
                     val purchase = CreatePurchaseModel(
                         InvoiceCode.NOTA_DE_VENTA,
                         stock.observation,
-                        false,
-                        stock.paymentMethodId,
-                        currentDate,
                         null,
+                        "",
                         null,
                         null
                     )
@@ -313,14 +304,13 @@ fun InventoriesScreen(
                         stock.quantity,
                         stock.cost,
                         product.price,
-                        null
                     )
                     navigationViewModel.loadBarStart()
                     incidentsViewModel.createPurchase(
                         purchase,
                         listOf(purchaseItem),
                         onResponse = {
-                            product.stock += stock.quantity
+                            products[selectedProductIndex] = product.copy(stock = product.stock + stock.quantity)
                             navigationViewModel.loadBarFinish()
                             navigationViewModel.showMessage("Se han guardado los cambios")
                         },
@@ -344,7 +334,7 @@ fun InventoriesScreen(
                     productsViewModel.trackStock(
                         product.id,
                         onResponse = {
-                            product.isTrackStock = true
+                            products[selectedProductIndex] = product.copy(isTrackStock = true)
                             navigationViewModel.loadBarFinish()
                             navigationViewModel.showMessage("Se han guardado los cambios")
                         },
@@ -379,8 +369,10 @@ fun InventoriesScreen(
                 pageSize,
                 onResponse = {
                     isRefreshing = false
+                    pageIndex = 0
+                    products.clear()
+                    products.addAll(it.toMutableList())
                     navigationViewModel.loadBarFinish()
-                    products = it
                 },
                 onFailure = {
                     isRefreshing = false
@@ -390,84 +382,71 @@ fun InventoriesScreen(
             )
         },
     ) {
-        Scaffold(
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { navigationViewModel.onNavigateTo(NavigateTo("createProducts")) },
-                ) {
-                    Icon(Icons.Filled.Add, "Floating action button.")
+        LazyColumn {
+            itemsIndexed(products) { index, product ->
+                var color = Color.White
+                if (product.stock <= 0 && product.isTrackStock) {
+                    color = KramviRed
                 }
-            },
-            floatingActionButtonPosition = FabPosition.End
-        ) { innerPadding ->
-            LazyColumn(Modifier.padding(innerPadding)) {
-                items(products) { product ->
-                    var color = Color.White
-                    if (product.stock <= 0 && product.isTrackStock) {
-                        color = KramviRed
-                    }
-                    ListItem(
-                        colors = ListItemDefaults.colors(color),
-                        modifier = Modifier.clickable {
+                ListItem(
+                    colors = ListItemDefaults.colors(color),
+                    modifier = Modifier.clickable {
+                        if (product.isTrackStock) {
+                            showProductBottomSheet = true
+                        } else {
+                            showTrackearProductsBottomSheet = true
+                        }
+                        selectedProduct = product
+                        selectedProductIndex = index
+                    },
+                    headlineContent = {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Text(text = product.fullName)
+                        }
+                    },
+                    supportingContent = {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Text(text = String.format("%.2f", product.price))
                             if (product.isTrackStock) {
-                                showProductBottomSheet = true
+                                Text(text = "Stock: ${product.stock}")
                             } else {
-                                showTrackearProductsBottomSheet = true
-                            }
-                            selectedProduct = product
-                        },
-                        headlineContent = {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                            ) {
-                                Text(text = product.fullName)
-                            }
-                        },
-                        supportingContent = {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                            ) {
-                                Text(text = String.format("%.2f", product.price))
-                                if (product.isTrackStock) {
-                                    Text(text = "Stock: ${product.stock}")
-                                } else {
-                                    Text(text = "Venta libre")
-                                }
+                                Text(text = "Venta libre")
                             }
                         }
-                    )
-                }
-                item {
-                    LaunchedEffect(Unit) {
-                        if (!isLoading && !isFinish) {
-                            isLoading = true
-                            navigationViewModel.loadBarStart()
-                            productsViewModel.getProductsByPage(
-                                pageIndex + 1,
-                                pageSize,
-                                onResponse = {
-                                    if (it.isEmpty()) {
-                                        isFinish = true
-                                    }
-                                    isLoading = false
-                                    navigationViewModel.loadBarFinish()
-                                    val mutableProducts: MutableList<ProductModel> =
-                                        products.toMutableList()
-                                    mutableProducts.addAll(it)
-                                    products = mutableProducts.toList()
-                                    pageIndex++
-                                },
-                                onFailure = {
-                                    isLoading = false
-                                    navigationViewModel.loadBarFinish()
-                                    navigationViewModel.showMessage(it)
-                                }
-                            )
-                        }
-                        //Do something when List end has been reached
                     }
+                )
+            }
+            item {
+                LaunchedEffect(Unit) {
+                    if (!isLoading && !isFinish) {
+                        isLoading = true
+                        navigationViewModel.loadBarStart()
+                        productsViewModel.getProductsByPage(
+                            pageIndex + 1,
+                            pageSize,
+                            onResponse = {
+                                if (it.isEmpty()) {
+                                    isFinish = true
+                                }
+                                isLoading = false
+                                navigationViewModel.loadBarFinish()
+                                products.addAll(it.toMutableList())
+                                pageIndex++
+                            },
+                            onFailure = {
+                                isLoading = false
+                                navigationViewModel.loadBarFinish()
+                                navigationViewModel.showMessage(it)
+                            }
+                        )
+                    }
+                    //Do something when List end has been reached
                 }
             }
         }

@@ -22,6 +22,7 @@ class SaleItemsViewModel: ViewModel() {
         val saleItem = SaleItemModel(
             product.fullName,
             product.price,
+            cost = product.cost,
             1.0,
             product.igvCode,
             product.igvCode,

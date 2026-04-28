@@ -58,10 +58,10 @@ import com.example.kramviapp.enums.InvoiceCode
 import com.example.kramviapp.enums.PrinterType
 import com.example.kramviapp.login.LoginViewModel
 import com.example.kramviapp.models.ActionModel
+import com.example.kramviapp.models.CreatePaymentModel
 import com.example.kramviapp.models.CreateSaleModel
 import com.example.kramviapp.models.CreateTurnModel
 import com.example.kramviapp.models.NavigateTo
-import com.example.kramviapp.models.OutStockModel
 import com.example.kramviapp.models.SaleModel
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.openTurn.OpenTurnDialog
@@ -110,8 +110,6 @@ fun ChargeLandscapeScreen(
     var showEditCustomerDialog by remember { mutableStateOf(false) }
     var showOpenTurnDialog by remember { mutableStateOf(false) }
     var showSplitPaymentsDialog by remember { mutableStateOf(false) }
-    var showOutStockDialog by remember { mutableStateOf(false) }
-    var outStocks: List<OutStockModel> by remember { mutableStateOf(listOf()) }
     var printers: List<PrinterModel> by remember { mutableStateOf(listOf()) }
 
     var saleItemIndex by remember { mutableIntStateOf(0) }
@@ -413,8 +411,9 @@ fun ChargeLandscapeScreen(
                     Spacer(modifier = Modifier.height(10.dp))
 
                     paymentMethods?.let { paymentMethods ->
-                        paymentMethodId = paymentMethods[0].id
-
+                        if (paymentMethodId == 0) {
+                            paymentMethodId = paymentMethods[0].id
+                        }
                         ExposedDropdownMenuBox(
                             expanded = expandedPaymentMethod,
                             onExpandedChange = {
@@ -600,13 +599,23 @@ fun ChargeLandscapeScreen(
                                     turnId = turn.id,
                                     isCredit = false,
                                 )
+                                val createdPayments = payments.toMutableList()
+                                if (createdPayments.isEmpty()) {
+                                    val payment = CreatePaymentModel(
+                                        charge,
+                                        paymentMethodId,
+                                        turn.id,
+                                    )
+                                    createdPayments.add(payment)
+                                }
                                 navigationViewModel.loadSpinnerStart()
                                 isEnabledSave = false
                                 chargeViewModel.createSale(
                                     createdSale,
                                     saleItems,
-                                    payments,
+                                    createdPayments,
                                     boardId,
+                                    setting.isAvailableStock,
                                     onResponse = {
                                         savedSale = it
                                         navigationViewModel.loadSpinnerFinish()

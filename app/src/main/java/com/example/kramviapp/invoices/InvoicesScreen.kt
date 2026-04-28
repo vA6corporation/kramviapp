@@ -38,7 +38,7 @@ import com.example.kramviapp.room.AppDatabase
 import com.example.kramviapp.room.PrinterModel
 import com.example.kramviapp.ui.theme.KramviRed
 import com.example.kramviapp.utils.BuildInvoiceSharePdf
-import com.example.kramviapp.utils.formatDate
+import com.example.kramviapp.utils.formatTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -292,7 +292,7 @@ fun InvoicesScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
                             Text(text = String.format("%.2f", sale.charge))
-                            Text(text = formatDate(sale.createdAt))
+                            Text(text = formatTime(sale.createdAt))
                         }
                     }
                 )

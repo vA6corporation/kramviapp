@@ -1,11 +1,7 @@
 package com.example.kramviapp.boards
 
 import com.example.kramviapp.models.BoardModel
-import com.example.kramviapp.models.FavoriteModel
-import com.example.kramviapp.models.ProductModel
-import com.example.kramviapp.models.TableModel
 import com.example.kramviapp.requests.BoardRequest
-import com.example.kramviapp.requests.BoardWithStockResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -33,9 +29,10 @@ interface BoardsService {
         @Body boardRequest: BoardRequest,
     ): Call<BoardModel>
 
-    @DELETE("boards/{boardId}")
+    @DELETE("boards/{boardId}/{observation}")
     fun deleteBoard(
         @Path("boardId") boardId: Int,
+        @Path("observation") observation: String
     ): Call<Unit>
 
     @DELETE("boards/boardItem/{boardId}/{boardItemId}/{quantity}")

@@ -3,6 +3,7 @@ package com.example.kramviapp.login
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -34,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -43,6 +46,7 @@ import com.example.kramviapp.models.NavigateTo
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.room.AppDatabase
 import com.example.kramviapp.room.UserModel
+import com.va6corporation.kramviapp.R
 import kotlinx.coroutines.launch
 
 @SuppressLint("ContextCastToActivity")
@@ -69,13 +73,13 @@ fun LoginScreen(
             .padding(12.dp)
             .background(MaterialTheme.colorScheme.surface)
     ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.kramvilogo),
-//            contentDescription = "Preview",
-//            modifier = Modifier
-//                .size(100.dp)
-//                .align(Alignment.CenterHorizontally)
-//        )
+        Image(
+            painter = painterResource(id = R.drawable.kramvilogo),
+            contentDescription = "Preview",
+            modifier = Modifier
+                .size(100.dp)
+                .align(Alignment.CenterHorizontally)
+        )
         Spacer(modifier = Modifier.height(12.dp))
         Text(text = "Por favor identifiquese")
         Spacer(modifier = Modifier.height(12.dp))
@@ -165,5 +169,7 @@ fun LoginScreen(
         }
         Spacer(modifier = Modifier.padding(4.dp))
         Text(text = "Soporte tecnico: 930 430 929", modifier = Modifier.align(Alignment.CenterHorizontally))
+        Spacer(modifier = Modifier.padding(4.dp))
+        Text(text = "v5.2", modifier = Modifier.align(Alignment.CenterHorizontally))
     }
 }

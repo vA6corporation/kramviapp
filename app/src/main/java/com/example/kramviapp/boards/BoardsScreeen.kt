@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.example.kramviapp.models.NavigateTo
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.ui.theme.KramviRed
@@ -49,12 +50,18 @@ fun BoardsScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        navigationViewModel.setTitle("Atencion de mesas")
+    LifecycleResumeEffect(Unit) {
+        // This block runs when the lifecycle reaches the RESUMED state
+        println("Screen resumed")
+        navigationViewModel.setTitle("Atencion de cajero")
         boardsViewModel.removeAllBoardItems()
         boardsViewModel.loadActiveBoards()
         if (tables == null) {
             tablesViewModel.loadTables()
+        }
+        onPauseOrDispose {
+            // Optional cleanup logic when leaving RESUMED state
+            println("Screen paused or disposed")
         }
     }
 

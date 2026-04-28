@@ -1,13 +1,11 @@
 package com.example.kramviapp.incidents
 
-import com.example.kramviapp.requests.IncidentInRequest
-import com.example.kramviapp.requests.IncidentOutRequest
+import com.example.kramviapp.requests.InIncidentRequest
+import com.example.kramviapp.requests.OutIncidentRequest
 import com.example.kramviapp.requests.PurchaseRequest
 import retrofit2.Call
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.POST
-import retrofit2.http.Path
 
 interface IncidentsService {
 
@@ -16,14 +14,14 @@ interface IncidentsService {
         @Body purchaseRequest: PurchaseRequest
     ): Call<Unit>
 
-    @POST("incidents/in")
+    @POST("inIncidents")
     fun createIn(
-        @Body incidentInRequest: IncidentInRequest
+        @Body incidentInRequest: InIncidentRequest
     ): Call<Unit>
 
-    @POST("incidents/out")
+    @POST("outIncidents")
     fun createOut(
-        @Body incidentOutRequest: IncidentOutRequest
+        @Body incidentOutRequest: OutIncidentRequest
     ): Call<Unit>
 
 }

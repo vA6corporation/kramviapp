@@ -4,7 +4,6 @@ import com.example.kramviapp.models.PaymentMethodModel
 import com.example.kramviapp.models.SaleModel
 import com.example.kramviapp.requests.CreditRequest
 import com.example.kramviapp.requests.SaleRequest
-import com.example.kramviapp.requests.SaleWithStockResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -21,15 +20,17 @@ interface ChargeService {
     fun getSaleById(@Path("saleId") saleId: Int): Call<SaleModel>
 
     @POST("sales")
-    fun createSale(@Body saleRequest: SaleRequest, @Query("boardId") boardId: Int?): Call<SaleModel>
-
-    @POST("sales/withStock")
-    fun createSaleWithStock(@Body saleRequest: SaleRequest, @Query("boardId") boardId: Int?): Call<SaleWithStockResponse>
+    fun createSale(
+        @Body saleRequest: SaleRequest,
+        @Query("boardId") boardId: Int?,
+        @Query("isAvailableStock") isAvailableStock: Boolean
+    ): Call<SaleModel>
 
     @POST("credits")
-    fun createCredit(@Body creditRequest: CreditRequest, @Query("boardId") boardId: Int?): Call<SaleModel>
-
-    @POST("credits/withStock")
-    fun createCreditWithStock(@Body creditRequest: CreditRequest, @Query("boardId") boardId: Int?): Call<SaleWithStockResponse>
+    fun createCredit(
+        @Body creditRequest: CreditRequest,
+        @Query("boardId") boardId: Int?,
+        @Query("isAvailableStock") isAvailableStock: Boolean
+    ): Call<SaleModel>
 
 }

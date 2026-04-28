@@ -110,11 +110,12 @@ class ChargeViewModel: ViewModel() {
         payments: List<CreatePaymentModel>,
         dues: List<CreateDueModel>,
         boardId: Int?,
+        isAvailableStock: Boolean,
         onResponse: (SaleModel) -> Unit,
         onFailure: (String) -> Unit,
     ) {
         val creditRequest = CreditRequest(sale, saleItems, payments, dues)
-        posStandardService.createCredit(creditRequest, boardId).enqueue(object: Callback<SaleModel> {
+        posStandardService.createCredit(creditRequest, boardId, isAvailableStock).enqueue(object: Callback<SaleModel> {
             override fun onResponse(call: Call<SaleModel>, response: Response<SaleModel>) {
                 if (response.isSuccessful) {
                     response.body()?.let(onResponse)
@@ -136,11 +137,12 @@ class ChargeViewModel: ViewModel() {
         saleItems: List<SaleItemModel>,
         payments: List<CreatePaymentModel>,
         boardId: Int?,
+        isAvailableStock: Boolean,
         onResponse: (SaleModel) -> Unit,
         onFailure: (String) -> Unit,
     ) {
         val saleRequest = SaleRequest(sale, saleItems, payments)
-        posStandardService.createSale(saleRequest, boardId).enqueue(object: Callback<SaleModel> {
+        posStandardService.createSale(saleRequest, boardId, isAvailableStock).enqueue(object: Callback<SaleModel> {
             override fun onResponse(call: Call<SaleModel>, response: Response<SaleModel>) {
                 if (response.isSuccessful) {
                     response.body()?.let(onResponse)

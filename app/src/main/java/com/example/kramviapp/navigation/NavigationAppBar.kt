@@ -63,6 +63,7 @@ fun NavigationAppBar(
     var key by remember { mutableStateOf("") }
     var showMessageDialog by remember { mutableStateOf(false) }
     val isShowSearch by navigationViewModel.isShowSearch.collectAsState()
+    val pathActionButton by navigationViewModel.pathActionButton.collectAsState()
     val isBackTo by navigationViewModel.isBackTo.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val message by navigationViewModel.message.collectAsState()
@@ -98,14 +99,16 @@ fun NavigationAppBar(
     }
 
     Scaffold(
-//        floatingActionButton = {
-//            FloatingActionButton(
-//                onClick = { navigationViewModel.onNavigateTo(NavigateTo("createProducts")) },
-//            ) {
-//                Icon(Icons.Filled.Add, "Floating action button.")
-//            }
-//        },
-//        floatingActionButtonPosition = FabPosition.End,
+        floatingActionButton = {
+            if (pathActionButton.isNotEmpty()) {
+                FloatingActionButton(
+                    onClick = { navigationViewModel.onNavigateTo(NavigateTo(pathActionButton)) },
+                ) {
+                    Icon(Icons.Filled.Add, "Floating action button.")
+                }
+            }
+        },
+        floatingActionButtonPosition = FabPosition.End,
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState) { snackbarData ->
                 Card(

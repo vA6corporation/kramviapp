@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.json.JSONObject
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
 import retrofit2.Call
@@ -66,8 +67,7 @@ class InvoicesViewModel: ViewModel() {
         onReponse: () -> Unit,
         onFailure: (String) -> Unit,
     ) {
-        val date = LocalDate.now().toString()
-        invoicesService.getSalesOfTheDay(date).enqueue(object: Callback<List<SaleModel>> {
+        invoicesService.getSalesOfTheDay().enqueue(object: Callback<List<SaleModel>> {
             override fun onResponse(call: Call<List<SaleModel>>, response: Response<List<SaleModel>>) {
                 if (response.isSuccessful) {
                     response.body()?.let {
@@ -127,6 +127,11 @@ class InvoicesViewModel: ViewModel() {
             override fun onResponse(call: Call<TicketModel>, response: Response<TicketModel>) {
                 if (response.isSuccessful) {
                     response.body()?.let { onResponse(it) }
+                } else {
+                    response.errorBody()?.let {
+                        val jsonObject = JSONObject(it.string())
+                        onFailure(jsonObject.getString("message"))
+                    }
                 }
             }
             override fun onFailure(call: Call<TicketModel>, t: Throwable) {

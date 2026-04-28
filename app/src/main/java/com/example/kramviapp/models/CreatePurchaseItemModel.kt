@@ -10,5 +10,4 @@ data class CreatePurchaseItemModel(
     val quantity: Double,
     val cost: Double,
     val price: Double,
-    val lot: Unit?,
 )

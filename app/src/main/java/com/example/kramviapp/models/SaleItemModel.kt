@@ -5,6 +5,7 @@ import com.example.kramviapp.enums.IgvCodeType
 data class SaleItemModel(
     val fullName: String,
     var price: Double,
+    val cost: Double?,
     var quantity: Double,
     var igvCode: IgvCodeType,
     val preIgvCode: IgvCodeType,

@@ -29,7 +29,7 @@ interface OpenTurnService {
     @PUT("turns/{turnId}")
     fun updateTurn(@Path("turnId") turnId: Int, @Body turnRequest: TurnRequest): Call<Unit>
 
-    @GET("payments/summaryByTurn/{turnId}")
+    @GET("payments/summaryPaymentsByTurn/{turnId}")
     fun getSummaryPaymentsByTurn(@Path("turnId") turnId: Int): Call<List<SummaryPaymentModel>>
 
     @GET("sales/summarySaleItemsByTurn/{turnId}")

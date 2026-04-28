@@ -152,7 +152,10 @@ fun SetUserScreen(
             Text(text = "USAR UNA CUENTA DIFERENTE")
         }
         Spacer(modifier = Modifier.padding(4.dp))
+        Spacer(modifier = Modifier.padding(4.dp))
         Text(text = "Soporte tecnico: 930 430 929", modifier = Modifier.align(Alignment.CenterHorizontally))
+        Spacer(modifier = Modifier.padding(4.dp))
+        Text(text = "v5.2", modifier = Modifier.align(Alignment.CenterHorizontally))
     }
 
 }

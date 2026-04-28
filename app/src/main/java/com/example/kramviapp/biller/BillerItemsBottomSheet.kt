@@ -18,14 +18,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.example.kramviapp.enums.IgvCodeType
-import com.example.kramviapp.models.BillerItemModel
+import com.example.kramviapp.models.ProductItemModel
 import com.example.kramviapp.ui.theme.DarkGreen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BillerItemBottomSheet(
-    billerItems: List<BillerItemModel>,
+    billerItems: List<ProductItemModel>,
     onDismissRequest: (saleItemIndex: Int?) -> Unit
 ) {
     val scope = rememberCoroutineScope()

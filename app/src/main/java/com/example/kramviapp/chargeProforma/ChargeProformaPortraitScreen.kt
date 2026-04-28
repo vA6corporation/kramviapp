@@ -90,7 +90,6 @@ fun ChargeProformaPortraitScreen(
     var showSearchCustomerDialog by remember { mutableStateOf(false) }
     var showCreateCustomerDialog by remember { mutableStateOf(false) }
     var showEditCustomerDialog by remember { mutableStateOf(false) }
-    var showOutStockDialog by remember { mutableStateOf(false) }
     var printers: List<PrinterModel> by remember { mutableStateOf(listOf()) }
 
     var proformaItemIndex by remember { mutableIntStateOf(0) }

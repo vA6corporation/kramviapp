@@ -1,9 +1,12 @@
 package com.example.kramviapp.products
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import com.example.kramviapp.charge.ChargeViewModel
 import com.example.kramviapp.enums.InvoiceCode
 import com.example.kramviapp.incidents.IncidentsViewModel
@@ -57,7 +61,6 @@ fun ProductsScreen(
     productsViewModel: ProductsViewModel,
     navigationViewModel: NavigationViewModel,
     incidentsViewModel: IncidentsViewModel,
-    chargeViewModel: ChargeViewModel,
 ) {
     val context = LocalContext.current
     var isRefreshing by remember { mutableStateOf(false) }
@@ -167,6 +170,7 @@ fun ProductsScreen(
                     val incident = CreateIncidentModel(stock.observation)
                     val incidentItem = CreateIncidentItemModel(
                         stock.quantity,
+                        product.price,
                         product.cost,
                         product.unitCode,
                         product.id
@@ -180,7 +184,8 @@ fun ProductsScreen(
                             navigationViewModel.showMessage("Se han guardado los cambios")
                             navigationViewModel.loadBarFinish()
                         },
-                        onFailure = {
+                        onFailure = { message ->
+                            navigationViewModel.showMessage(message)
                             navigationViewModel.loadBarFinish()
                         }
                     )
@@ -197,6 +202,7 @@ fun ProductsScreen(
                     val incident = CreateIncidentModel(stock.observation)
                     val incidentItem = CreateIncidentItemModel(
                         stock.quantity,
+                        product.price,
                         product.cost,
                         product.unitCode,
                         product.id
@@ -210,7 +216,8 @@ fun ProductsScreen(
                             navigationViewModel.showMessage("Se han guardado los cambios")
                             navigationViewModel.loadBarFinish()
                         },
-                        onFailure = {
+                        onFailure = { message ->
+                            navigationViewModel.showMessage(message)
                             navigationViewModel.loadBarFinish()
                         }
                     )
@@ -221,20 +228,14 @@ fun ProductsScreen(
 
     if (showPurchaseStockDialog) {
         selectedProduct?.let { product ->
-            PurchaseStockDialog(
-                chargeViewModel,
-            ) { stock ->
+            PurchaseStockDialog { stock ->
                 showPurchaseStockDialog = false
                 stock?.let {
-                    val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
-                    val currentDate = sdf.format(Date())
                     val purchase = CreatePurchaseModel(
                         InvoiceCode.NOTA_DE_VENTA,
                         stock.observation,
-                        false,
-                        stock.paymentMethodId,
-                        currentDate,
                         null,
+                        "",
                         null,
                         null
                     )
@@ -246,7 +247,6 @@ fun ProductsScreen(
                         stock.quantity,
                         stock.cost,
                         product.price,
-                        null
                     )
                     navigationViewModel.loadBarStart()
                     incidentsViewModel.createPurchase(
@@ -299,6 +299,7 @@ fun ProductsScreen(
         actions.add(ActionModel("show_search", "Buscar", Icons.Default.Search, false))
         actions.add(ActionModel("scan_code", "Scanear codigo", Icons.Filled.QrCodeScanner, false))
         navigationViewModel.setActions(actions)
+        navigationViewModel.setPathActionButton("createProducts")
     }
 
     PullToRefreshBox(
@@ -323,17 +324,8 @@ fun ProductsScreen(
             )
         },
     ) {
-        Scaffold(
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { navigationViewModel.onNavigateTo(NavigateTo("createProducts")) },
-                ) {
-                    Icon(Icons.Filled.Add, "Floating action button.")
-                }
-            },
-            floatingActionButtonPosition = FabPosition.End
-        ) { innerPadding ->
-            LazyColumn(Modifier.padding(innerPadding)) {
+        Column(Modifier.fillMaxHeight().background(Color.White)) {
+            LazyColumn {
                 items(products) { product ->
                     var color = Color.White
                     if (product.stock <= 0 && product.isTrackStock) {
@@ -404,5 +396,17 @@ fun ProductsScreen(
                 }
             }
         }
+//        Scaffold(
+//            floatingActionButton = {
+//                FloatingActionButton(
+//                    onClick = { navigationViewModel.onNavigateTo(NavigateTo("createProducts")) },
+//                ) {
+//                    Icon(Icons.Filled.Add, "Floating action button.")
+//                }
+//            },
+//            floatingActionButtonPosition = FabPosition.End
+//        ) { innerPadding ->
+//
+//        }
     }
 }

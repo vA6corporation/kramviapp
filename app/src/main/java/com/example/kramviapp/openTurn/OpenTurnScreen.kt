@@ -1,5 +1,6 @@
 package com.example.kramviapp.openTurn
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material3.Button
@@ -21,7 +21,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,7 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.datastore.preferences.core.emptyPreferences
 import com.example.kramviapp.enums.PrinterType
 import com.example.kramviapp.login.LoginViewModel
 import com.example.kramviapp.models.ActionModel
@@ -50,12 +48,10 @@ import com.example.kramviapp.printers.PrinterTurn80
 import com.example.kramviapp.room.AppDatabase
 import com.example.kramviapp.room.PrinterModel
 import com.example.kramviapp.ui.theme.DarkGreen
-import com.example.kramviapp.ui.theme.KramviRed
 import com.example.kramviapp.utils.formatDate
 import com.example.kramviapp.utils.formatTime
-import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs.Gray
-import kotlinx.coroutines.delay
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun OpenTurnScreen(
     database: AppDatabase,
@@ -484,7 +480,7 @@ fun OpenTurnScreen(
                                             } else {
                                                 Text(text = "${summarySaleItem.fullName} (${String.format("%.2f", summarySaleItem.totalQuantity)})")
                                             }
-                                            Text(text = String.format("%.2f", summarySaleItem.totalSale))
+                                            Text(text = String.format("%.2f", summarySaleItem.totalCharge))
                                         }
                                     },
                                 )

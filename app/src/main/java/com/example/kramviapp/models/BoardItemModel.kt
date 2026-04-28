@@ -7,6 +7,7 @@ data class BoardItemModel(
     val id: Int,
     val fullName: String,
     var price: Double,
+    val cost: Double?,
     var quantity: Double,
     var preQuantity: Double,
     var igvCode: IgvCodeType,

@@ -373,8 +373,9 @@ fun CreditBillerPortraitScreen(
             Spacer(modifier = Modifier.height(10.dp))
 
             paymentMethods?.let { paymentMethods ->
-                paymentMethodId = paymentMethods[0].id
-
+                if (paymentMethodId == 0) {
+                    paymentMethodId = paymentMethods[0].id
+                }
                 ExposedDropdownMenuBox(
                     expanded = expandedPaymentMethod,
                     onExpandedChange = {

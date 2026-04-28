@@ -12,9 +12,8 @@ import retrofit2.http.Path
 
 interface InvoicesService {
 
-    @GET("sales/salesOfTheDay/{date}")
+    @GET("sales/salesOfTheDay")
     fun getSalesOfTheDay(
-        @Path("date") date: String
     ): Call<List<SaleModel>>
 
     @GET("invoices/send/{saleId}")

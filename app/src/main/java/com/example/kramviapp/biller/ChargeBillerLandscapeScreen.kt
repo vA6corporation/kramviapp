@@ -1,5 +1,6 @@
 package com.example.kramviapp.biller
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -63,6 +64,7 @@ import com.example.kramviapp.enums.InvoiceCode
 import com.example.kramviapp.enums.PrinterType
 import com.example.kramviapp.login.LoginViewModel
 import com.example.kramviapp.models.ActionModel
+import com.example.kramviapp.models.CreatePaymentModel
 import com.example.kramviapp.models.CreateSaleModel
 import com.example.kramviapp.models.CreateTurnModel
 import com.example.kramviapp.models.SaleItemModel
@@ -78,6 +80,7 @@ import com.example.kramviapp.room.PrinterModel
 import com.example.kramviapp.ui.theme.DarkGreen
 import com.example.kramviapp.utils.BuildInvoiceSharePdf
 
+@SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChargeBillerLandscapeScreen(
@@ -94,7 +97,7 @@ fun ChargeBillerLandscapeScreen(
     val context = LocalContext.current
 
     val clickMenu by navigationViewModel.clickMenu.collectAsState()
-    val billerItems by billerViewModel.billerItems.collectAsState()
+    val productItems by billerViewModel.productItems.collectAsState()
     val paymentMethods by chargeViewModel.paymentMethods.collectAsState()
     val payments by chargeViewModel.payments.collectAsState()
     val setting by loginViewModel.setting.collectAsState()
@@ -114,7 +117,7 @@ fun ChargeBillerLandscapeScreen(
     var showSplitPaymentsDialog by remember { mutableStateOf(false) }
     var printers: List<PrinterModel> by remember { mutableStateOf(listOf()) }
 
-    var billerItemIndex by remember { mutableIntStateOf(0) }
+    var productItemIndex by remember { mutableIntStateOf(0) }
     var invoiceCode by remember { mutableStateOf(InvoiceCode.BOLETA) }
     var paymentMethodId by remember { mutableStateOf(0) }
     var currencyCode by remember { mutableStateOf(setting.defaultCurrencyCode) }
@@ -130,9 +133,9 @@ fun ChargeBillerLandscapeScreen(
     var isEnabledSave by remember { mutableStateOf(false) }
 
     var charge = 0.0
-    for (billerItem in billerItems) {
-        if (billerItem.igvCode != IgvCodeType.BONIFICACION) {
-            charge += billerItem.price * billerItem.quantity
+    for (productItems in productItems) {
+        if (productItems.igvCode != IgvCodeType.BONIFICACION) {
+            charge += productItems.price * productItems.quantity
         }
     }
     charge -= if (discount.isNotEmpty()) discount.toDouble() else 0.0
@@ -153,13 +156,14 @@ fun ChargeBillerLandscapeScreen(
                 invoiceSerial = invoiceSerial,
                 onPrintRequest = {
                     val saleItems: MutableList<SaleItemModel> = mutableListOf()
-                    for (billerItem in billerItems) {
+                    for (productItem in productItems) {
                         val saleItem = SaleItemModel(
-                            fullName = billerItem.fullName,
-                            price = billerItem.price,
-                            quantity = billerItem.quantity,
-                            igvCode = billerItem.igvCode,
-                            preIgvCode = billerItem.igvCode,
+                            fullName = productItem.fullName,
+                            price = productItem.price,
+                            cost = 0.0,
+                            quantity = productItem.quantity,
+                            igvCode = productItem.igvCode,
+                            preIgvCode = productItem.igvCode,
                             unitCode = "NIU",
                             productId = 0,
                             prices = listOf(),
@@ -205,17 +209,18 @@ fun ChargeBillerLandscapeScreen(
                     showChargeBottomSheet = false
                     customersViewModel.setCustomer(null)
                     chargeViewModel.setPayments(listOf())
-                    billerViewModel.removeAllBillerItems()
+                    billerViewModel.removeAllProductItems()
                 },
                 onShareRequest = {
                     val saleItems: MutableList<SaleItemModel> = mutableListOf()
-                    for (billerItem in billerItems) {
+                    for (productItem in productItems) {
                         val saleItem = SaleItemModel(
-                            fullName = billerItem.fullName,
-                            price = billerItem.price,
-                            quantity = billerItem.quantity,
-                            igvCode = billerItem.igvCode,
-                            preIgvCode = billerItem.igvCode,
+                            fullName = productItem.fullName,
+                            price = productItem.price,
+                            cost = 0.0,
+                            quantity = productItem.quantity,
+                            igvCode = productItem.igvCode,
+                            preIgvCode = productItem.igvCode,
                             unitCode = "NIU",
                             productId = 0,
                             prices = listOf(),
@@ -229,13 +234,13 @@ fun ChargeBillerLandscapeScreen(
                     showChargeBottomSheet = false
                     customersViewModel.setCustomer(null)
                     chargeViewModel.setPayments(listOf())
-                    billerViewModel.removeAllBillerItems()
+                    billerViewModel.removeAllProductItems()
                 },
                 onDismissRequest = {
                     showChargeBottomSheet = false
                     customersViewModel.setCustomer(null)
                     chargeViewModel.setPayments(listOf())
-                    billerViewModel.removeAllBillerItems()
+                    billerViewModel.removeAllProductItems()
                 }
             )
         }
@@ -260,9 +265,9 @@ fun ChargeBillerLandscapeScreen(
     if (showCreateBillerItemDialog) {
         CreateBillerItemDialog(
             loginViewModel,
-            onDismissRequest = { billerItem ->
-                billerItem?.let {
-                    billerViewModel.addBillerItem(it)
+            onDismissRequest = { productItem ->
+                productItem?.let {
+                    billerViewModel.addProductItem(it)
                 }
                 showCreateBillerItemDialog = false
             }
@@ -270,15 +275,15 @@ fun ChargeBillerLandscapeScreen(
     }
     if (showEditBillerItemDialog) {
         EditBillerItemDialog(
-            billerItems[billerItemIndex],
-            onDismissRequest = { billerItem ->
-                billerItem?.let {
-                    billerViewModel.updateBillerItem(billerItemIndex, it)
+            productItems[productItemIndex],
+            onDismissRequest = { productItem ->
+                productItem?.let {
+                    billerViewModel.updateProductItem(productItemIndex, it)
                 }
                 showEditBillerItemDialog = false
             },
             onDeleteRequest = {
-                billerViewModel.removeBillerItem(billerItemIndex)
+                billerViewModel.removeProductItem(productItemIndex)
                 showEditBillerItemDialog = false
             }
         )
@@ -344,7 +349,7 @@ fun ChargeBillerLandscapeScreen(
             },
             onConfirmation = {
                 showConfirmDialog = false
-                billerViewModel.removeAllBillerItems()
+                billerViewModel.removeAllProductItems()
                 customersViewModel.setCustomer(null)
             },
             dialogText = "Esta seguro de cancelar la venta?..."
@@ -456,8 +461,9 @@ fun ChargeBillerLandscapeScreen(
                     Spacer(modifier = Modifier.height(10.dp))
 
                     paymentMethods?.let { paymentMethods ->
-                        paymentMethodId = paymentMethods[0].id
-
+                        if (paymentMethodId == 0) {
+                            paymentMethodId = paymentMethods[0].id
+                        }
                         ExposedDropdownMenuBox(
                             expanded = expandedPaymentMethod,
                             onExpandedChange = {
@@ -608,12 +614,21 @@ fun ChargeBillerLandscapeScreen(
                                     turnId = turn.id,
                                     isCredit = false,
                                 )
+                                val createdPayments = payments.toMutableList()
+                                if (createdPayments.isEmpty()) {
+                                    val payment = CreatePaymentModel(
+                                        charge,
+                                        paymentMethodId,
+                                        turn.id,
+                                    )
+                                    createdPayments.add(payment)
+                                }
                                 navigationViewModel.loadSpinnerStart()
                                 isEnabledSave = false
                                 billerViewModel.createSale(
                                     createdSale,
-                                    billerItems,
-                                    payments,
+                                    productItems,
+                                    createdPayments,
                                     onResponse = {
                                         savedSale = it
                                         navigationViewModel.loadSpinnerFinish()
@@ -639,27 +654,27 @@ fun ChargeBillerLandscapeScreen(
                 state = listState,
                 modifier = Modifier.weight(1f)
             ) {
-                itemsIndexed(billerItems) { index, billerItem ->
+                itemsIndexed(productItems) { index, productItem ->
                     ListItem(
                         modifier = Modifier.clickable {
-                            billerItemIndex = index
+                            productItemIndex = index
                             showEditBillerItemDialog = true
                         },
-                        headlineContent = { Text(billerItem.fullName) },
+                        headlineContent = { Text(productItem.fullName) },
                         supportingContent = {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                if  ((billerItem.quantity % 1).toFloat() == 0f) {
-                                    Text(text = "x${String.format("%.0f", billerItem.quantity)}")
+                                if  ((productItem.quantity % 1).toFloat() == 0f) {
+                                    Text(text = "x${String.format("%.0f", productItem.quantity)}")
                                 } else {
-                                    Text(text = "x${String.format("%.2f", billerItem.quantity)}")
+                                    Text(text = "x${String.format("%.2f", productItem.quantity)}")
                                 }
-                                if (billerItem.igvCode == IgvCodeType.BONIFICACION) {
+                                if (productItem.igvCode == IgvCodeType.BONIFICACION) {
                                     Text(text = "Bonificacion", color = DarkGreen)
                                 }
-                                Text(text = String.format("%.2f", billerItem.price))
+                                Text(text = String.format("%.2f", productItem.price))
                             }
                         },
                     )

@@ -44,10 +44,8 @@ import com.example.kramviapp.models.StockModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PurchaseStockDialog(
-    chargeViewModel: ChargeViewModel,
     onDismissRequest: (PurchaseStockModel?) -> Unit
 ) {
-    val paymentMethods by chargeViewModel.paymentMethods.collectAsState()
     Dialog(onDismissRequest = { onDismissRequest(null) }) {
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -58,18 +56,8 @@ fun PurchaseStockDialog(
             var paymentMethodId by remember { mutableIntStateOf(0) }
             var observation by remember { mutableStateOf("") }
 
-            var isEnabledSave by remember { mutableStateOf(false) }
             var isValidQuantity by remember { mutableStateOf(true) }
             var isValidCost by remember { mutableStateOf(true) }
-            var expandedPaymentMethod by remember { mutableStateOf(false) }
-
-            if (paymentMethods == null) {
-                chargeViewModel.loadPaymentMethods(onResponse = {
-                    isEnabledSave = true
-                })
-            } else {
-                isEnabledSave = true
-            }
 
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(
@@ -91,54 +79,11 @@ fun PurchaseStockDialog(
                     onValueChange = { cost = it },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    placeholder = { Text("Costo") },
+                    placeholder = { Text("Costo unitario") },
                     singleLine = true,
                     isError = !isValidCost,
                     maxLines = 1,
                 )
-                paymentMethods?.let { paymentMethods ->
-                    paymentMethodId = paymentMethods[0].id
-
-                    ExposedDropdownMenuBox(
-                        expanded = expandedPaymentMethod,
-                        onExpandedChange = {
-                            expandedPaymentMethod = !expandedPaymentMethod
-                        }
-                    ) {
-                        TextField(
-                            readOnly = true,
-                            value = paymentMethods.find { it.id == paymentMethodId }?.name ?: "",
-                            onValueChange = { },
-                            label = { Text("Medio de pago") },
-                            trailingIcon = {
-                                ExposedDropdownMenuDefaults.TrailingIcon(
-                                    expanded = expandedPaymentMethod
-                                )
-                            },
-                            modifier = Modifier
-                                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-                                .fillMaxWidth(),
-                            colors = ExposedDropdownMenuDefaults.textFieldColors()
-                        )
-                        ExposedDropdownMenu(
-                            expanded = expandedPaymentMethod,
-                            onDismissRequest = { expandedPaymentMethod = false }
-                        ) {
-                            for (paymentMethod in paymentMethods) {
-                                DropdownMenuItem(
-                                    onClick = {
-                                        paymentMethodId = paymentMethod.id
-                                        expandedPaymentMethod = false
-                                    },
-                                    text = {
-                                        Text(text = paymentMethod.name)
-                                    }
-                                )
-                            }
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
                 TextField(
                     value = observation,
                     onValueChange = { observation = it },
@@ -161,7 +106,6 @@ fun PurchaseStockDialog(
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Button(
-                        enabled = isEnabledSave,
                         onClick = {
                             if (quantity.isEmpty()) {
                                 isValidQuantity = false

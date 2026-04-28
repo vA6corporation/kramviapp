@@ -1,5 +1,6 @@
 package com.example.kramviapp.posBoard
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import com.example.kramviapp.models.SaleItemModel
 import com.example.kramviapp.ui.theme.DarkGreen
 import kotlinx.coroutines.launch
 
+@SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BoardItemBottomSheet(

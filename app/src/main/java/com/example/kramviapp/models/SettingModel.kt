@@ -25,6 +25,7 @@ data class SettingModel(
     val isShowTotalDiscountPercent: Boolean = false,
     val isShowCredit: Boolean = false,
     val isShowEditPrice: Boolean = false,
+    val isAvailableStock: Boolean = false,
 
     val defaultIgvPercent: Double = 18.0,
     val defaultRcPercent: Double = 0.0

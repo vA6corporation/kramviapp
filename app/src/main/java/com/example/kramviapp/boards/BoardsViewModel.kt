@@ -13,7 +13,6 @@ import com.example.kramviapp.models.UserModel
 import com.example.kramviapp.printers.PrinterCommand58
 import com.example.kramviapp.printers.PrinterCommand80
 import com.example.kramviapp.requests.BoardRequest
-import com.example.kramviapp.requests.BoardWithStockResponse
 import com.example.kramviapp.room.PrinterModel
 import com.va6corporation.kramviapp.BuildConfig
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -211,6 +210,7 @@ class BoardsViewModel: ViewModel() {
             id = 0,
             fullName = product.fullName,
             price = product.price,
+            cost = product.cost,
             quantity = 1.0,
             preQuantity = 0.0,
             igvCode = product.igvCode,
@@ -341,10 +341,11 @@ class BoardsViewModel: ViewModel() {
 
     fun deleteBoard(
         boardId: Int,
+        observation: String,
         onResponse: () -> Unit,
         onFailure: (String) -> Unit,
     ) {
-        boardsService.deleteBoard(boardId).enqueue(object: Callback<Unit> {
+        boardsService.deleteBoard(boardId, observation).enqueue(object: Callback<Unit> {
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                 if (response.isSuccessful) {
                     onResponse()

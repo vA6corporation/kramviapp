@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.DesktopWindows
 import androidx.compose.material.icons.filled.PointOfSale
 import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material.icons.filled.ShoppingBasket
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.LinearProgressIndicator
@@ -88,8 +89,8 @@ import com.example.kramviapp.openTurn.OpenTurnScreen
 import com.example.kramviapp.openTurn.OpenTurnViewModel
 import com.example.kramviapp.posBoard.PosBoardLandscapeScreen
 import com.example.kramviapp.posBoard.PosBoardPortraitScreen
-import com.example.kramviapp.posFastFood.PosFastFoodLandscapeScreen
-import com.example.kramviapp.posFastFood.PosFastFoodPortraitScreen
+import com.example.kramviapp.posFood.PosFastFoodLandscapeScreen
+import com.example.kramviapp.posFood.PosFastFoodPortraitScreen
 import com.example.kramviapp.posStandard.PosStandardLandscapeScreen
 import com.example.kramviapp.posStandard.PosStandardPortraitScreen
 import com.example.kramviapp.products.CreateProductsScreen
@@ -127,7 +128,6 @@ private lateinit var invoicesViewModel: InvoicesViewModel
 private lateinit var productsViewModel: ProductsViewModel
 private lateinit var billerViewModel: BillerViewModel
 private lateinit var chargeViewModel: ChargeViewModel
-
 private lateinit var proformasViewModel: ProformasViewModel
 private lateinit var categoriesViewModel: CategoriesViewModel
 private lateinit var incidentsViewModel: IncidentsViewModel
@@ -243,6 +243,7 @@ class MainActivity : ComponentActivity() {
                 route?.let {
                     if (currentPath != it) {
                         navigationViewModel.setActions(listOf())
+                        navigationViewModel.setPathActionButton("")
                     }
                     if (mainScreens.contains(it)) {
                         navigationViewModel.hideBackTo()
@@ -311,7 +312,7 @@ class MainActivity : ComponentActivity() {
                         if (user.activeModule["boards"] == true || user.isAdmin) {
                             modules.add(
                                 ModuleModel(
-                                    name = "Atencion de mesas",
+                                    name = "Atencion de cajero",
                                     drawable = Icons.Default.DesktopWindows,
                                     path = "boards"
                                 )
@@ -322,7 +323,7 @@ class MainActivity : ComponentActivity() {
                         if (user.activeModule["boardsWaiter"] == true || user.isAdmin) {
                             modules.add(
                                 ModuleModel(
-                                    name = "Atencion de mesas",
+                                    name = "Atencion de mozos",
                                     drawable = Icons.Default.DesktopWindows,
                                     path = "boardsWaiter"
                                 )
@@ -384,17 +385,17 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     }
-//                    if (activeModule.biller) {
-//                        if (user.privileges["biller"] == true || user.isAdmin) {
-//                            modules.add(
-//                                ModuleModel(
-//                                    name = "Facturador",
-//                                    drawable = Icons.Default.Star,
-//                                    path = "biller"
-//                                )
-//                            )
-//                        }
-//                    }
+                    if (activeModule.biller) {
+                        if (user.activeModule["biller"] == true || user.isAdmin) {
+                            modules.add(
+                                ModuleModel(
+                                    name = "Facturador",
+                                    drawable = Icons.Default.Star,
+                                    path = "biller"
+                                )
+                            )
+                        }
+                    }
                     modules.add(
                         ModuleModel(
                             name = "KramviWeb",
@@ -475,14 +476,14 @@ class MainActivity : ComponentActivity() {
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(65.dp)
+                                        .height(50.dp)
                                         .zIndex(1f)
                                         .background(KramviRed),
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     Text(
-                                        text = "NO HAY CONEXION A INTERNET",
+                                        text = "Sin conexion a internet",
                                         color = Color.White,
                                         style = MaterialTheme.typography.titleMedium
                                     )
@@ -690,12 +691,17 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                                 composable("changeBoard/{boardId}") { backStackEntry ->
-                                    ChangeBoardsScreen(
-                                        backStackEntry.arguments?.getInt("boardId") ?: 0,
-                                        boardsViewModel,
-                                        tablesViewModel,
-                                        navigationViewModel,
-                                    )
+                                    backStackEntry.arguments?.let { arguments ->
+                                        val boardId = arguments.getString("boardId")
+                                        if (boardId != null) {
+                                            ChangeBoardsScreen(
+                                                boardId.toInt(),
+                                                boardsViewModel,
+                                                tablesViewModel,
+                                                navigationViewModel,
+                                            )
+                                        }
+                                    }
                                 }
                                 composable("posBoard/{tableIndex}/{isWaiter}") { backStackEntry ->
                                     when (configuration.orientation) {
@@ -802,7 +808,6 @@ class MainActivity : ComponentActivity() {
                                         productsViewModel,
                                         navigationViewModel,
                                         incidentsViewModel,
-                                        chargeViewModel,
                                     )
                                 }
                                 composable("inventories") {
@@ -810,7 +815,6 @@ class MainActivity : ComponentActivity() {
                                         productsViewModel,
                                         navigationViewModel,
                                         incidentsViewModel,
-                                        chargeViewModel,
                                         loginViewModel,
                                     )
                                 }

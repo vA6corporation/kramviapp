@@ -56,8 +56,6 @@ import com.example.kramviapp.models.CreatePaymentModel
 import com.example.kramviapp.models.CreateSaleModel
 import com.example.kramviapp.models.CreateTurnModel
 import com.example.kramviapp.models.NavigateTo
-import com.example.kramviapp.models.OutStockModel
-import com.example.kramviapp.models.PaymentModel
 import com.example.kramviapp.models.SaleModel
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.openTurn.OpenTurnDialog
@@ -104,8 +102,6 @@ fun ChargePortraitScreen(
     var showEditCustomerDialog by remember { mutableStateOf(false) }
     var showOpenTurnDialog by remember { mutableStateOf(false) }
     var showSplitPaymentsDialog by remember { mutableStateOf(false) }
-    var showOutStockDialog by remember { mutableStateOf(false) }
-    var outStocks: List<OutStockModel> by remember { mutableStateOf(listOf()) }
     var printers: List<PrinterModel> by remember { mutableStateOf(listOf()) }
 
     var saleItemIndex by remember { mutableIntStateOf(0) }
@@ -215,11 +211,6 @@ fun ChargePortraitScreen(
                     navigationViewModel.onNavigateTo(NavigateTo(navigateTo, true))
                 }
             )
-        }
-    }
-    if (showOutStockDialog) {
-        OutStockDialog(outStocks = outStocks) {
-            showOutStockDialog = false
         }
     }
     if (showSplitPaymentsDialog) {
@@ -437,8 +428,9 @@ fun ChargePortraitScreen(
             Spacer(modifier = Modifier.height(10.dp))
 
             paymentMethods?.let { paymentMethods ->
-                paymentMethodId = paymentMethods[0].id
-
+                if (paymentMethodId == 0) {
+                    paymentMethodId = paymentMethods[0].id
+                }
                 ExposedDropdownMenuBox(
                     expanded = expandedPaymentMethod,
                     onExpandedChange = {
@@ -640,6 +632,7 @@ fun ChargePortraitScreen(
                             saleItems,
                             createdPayments,
                             boardId,
+                            setting.isAvailableStock,
                             onResponse = {
                                 savedSale = it
                                 navigationViewModel.loadSpinnerFinish()

@@ -1,5 +1,6 @@
 package com.example.kramviapp.biller
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.horizontalScroll
@@ -57,6 +58,7 @@ import com.example.kramviapp.enums.InvoiceCode
 import com.example.kramviapp.enums.PrinterType
 import com.example.kramviapp.login.LoginViewModel
 import com.example.kramviapp.models.ActionModel
+import com.example.kramviapp.models.CreatePaymentModel
 import com.example.kramviapp.models.CreateSaleModel
 import com.example.kramviapp.models.CreateTurnModel
 import com.example.kramviapp.models.SaleItemModel
@@ -71,6 +73,7 @@ import com.example.kramviapp.room.AppDatabase
 import com.example.kramviapp.room.PrinterModel
 import com.example.kramviapp.utils.BuildInvoiceSharePdf
 
+@SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChargeBillerPortraitScreen(
@@ -86,7 +89,7 @@ fun ChargeBillerPortraitScreen(
     val context = LocalContext.current
 
     val clickMenu by navigationViewModel.clickMenu.collectAsState()
-    val billerItems by billerViewModel.billerItems.collectAsState()
+    val productItems by billerViewModel.productItems.collectAsState()
     val paymentMethods by chargeViewModel.paymentMethods.collectAsState()
     val payments by chargeViewModel.payments.collectAsState()
     val setting by loginViewModel.setting.collectAsState()
@@ -124,7 +127,7 @@ fun ChargeBillerPortraitScreen(
 
     var charge = 0.0
     var countProducts = 0.0
-    for (billerItem in billerItems) {
+    for (billerItem in productItems) {
         if (billerItem.igvCode != IgvCodeType.BONIFICACION) {
             charge += billerItem.price * billerItem.quantity
         }
@@ -148,10 +151,11 @@ fun ChargeBillerPortraitScreen(
                 invoiceSerial = invoiceSerial,
                 onPrintRequest = {
                     val saleItems: MutableList<SaleItemModel> = mutableListOf()
-                    for (billerItem in billerItems) {
+                    for (billerItem in productItems) {
                         val saleItem = SaleItemModel(
                             fullName = billerItem.fullName,
                             price = billerItem.price,
+                            cost = 0.0,
                             quantity = billerItem.quantity,
                             igvCode = billerItem.igvCode,
                             preIgvCode = billerItem.igvCode,
@@ -200,14 +204,15 @@ fun ChargeBillerPortraitScreen(
                     showChargeBottomSheet = false
                     customersViewModel.setCustomer(null)
                     chargeViewModel.setPayments(listOf())
-                    billerViewModel.removeAllBillerItems()
+                    billerViewModel.removeAllProductItems()
                 },
                 onShareRequest = {
                     val saleItems: MutableList<SaleItemModel> = mutableListOf()
-                    for (billerItem in billerItems) {
+                    for (billerItem in productItems) {
                         val saleItem = SaleItemModel(
                             fullName = billerItem.fullName,
                             price = billerItem.price,
+                            cost = 0.0,
                             quantity = billerItem.quantity,
                             igvCode = billerItem.igvCode,
                             preIgvCode = billerItem.igvCode,
@@ -224,13 +229,13 @@ fun ChargeBillerPortraitScreen(
                     showChargeBottomSheet = false
                     customersViewModel.setCustomer(null)
                     chargeViewModel.setPayments(listOf())
-                    billerViewModel.removeAllBillerItems()
+                    billerViewModel.removeAllProductItems()
                 },
                 onDismissRequest = {
                     showChargeBottomSheet = false
                     customersViewModel.setCustomer(null)
                     chargeViewModel.setPayments(listOf())
-                    billerViewModel.removeAllBillerItems()
+                    billerViewModel.removeAllProductItems()
                 }
             )
         }
@@ -255,9 +260,9 @@ fun ChargeBillerPortraitScreen(
     if (showCreateBillerItemDialog) {
         CreateBillerItemDialog(
             loginViewModel,
-            onDismissRequest = { billerItem ->
-                billerItem?.let {
-                    billerViewModel.addBillerItem(it)
+            onDismissRequest = { productItem ->
+                productItem?.let {
+                    billerViewModel.addProductItem(it)
                 }
                 showCreateBillerItemDialog = false
             }
@@ -265,15 +270,15 @@ fun ChargeBillerPortraitScreen(
     }
     if (showEditBillerItemDialog) {
         EditBillerItemDialog(
-            billerItems[billerItemIndex],
-            onDismissRequest = { billerItem ->
-                billerItem?.let {
-                    billerViewModel.updateBillerItem(billerItemIndex, it)
+            productItems[billerItemIndex],
+            onDismissRequest = { productItem ->
+                productItem?.let {
+                    billerViewModel.updateProductItem(billerItemIndex, it)
                 }
                 showEditBillerItemDialog = false
             },
             onDeleteRequest = {
-                billerViewModel.removeBillerItem(billerItemIndex)
+                billerViewModel.removeProductItem(billerItemIndex)
                 showEditBillerItemDialog = false
             }
         )
@@ -333,7 +338,7 @@ fun ChargeBillerPortraitScreen(
         )
     }
     if (showBillerItemBottomSheet) {
-        BillerItemBottomSheet(billerItems) {
+        BillerItemBottomSheet(productItems) {
             if (it == null) {
                 showBillerItemBottomSheet = false
             } else {
@@ -349,7 +354,7 @@ fun ChargeBillerPortraitScreen(
             },
             onConfirmation = {
                 showConfirmDialog = false
-                billerViewModel.removeAllBillerItems()
+                billerViewModel.removeAllProductItems()
                 customersViewModel.setCustomer(null)
             },
             dialogText = "Esta seguro de cancelar la venta?..."
@@ -482,8 +487,9 @@ fun ChargeBillerPortraitScreen(
             Spacer(modifier = Modifier.height(10.dp))
 
             paymentMethods?.let { paymentMethods ->
-                paymentMethodId = paymentMethods[0].id
-
+                if (paymentMethodId == 0) {
+                    paymentMethodId = paymentMethods[0].id
+                }
                 ExposedDropdownMenuBox(
                     expanded = expandedPaymentMethod,
                     onExpandedChange = {
@@ -634,12 +640,21 @@ fun ChargeBillerPortraitScreen(
                             turnId = turn.id,
                             isCredit = false,
                         )
+                        val createdPayments = payments.toMutableList()
+                        if (createdPayments.isEmpty()) {
+                            val payment = CreatePaymentModel(
+                                charge,
+                                paymentMethodId,
+                                turn.id,
+                            )
+                            createdPayments.add(payment)
+                        }
                         navigationViewModel.loadSpinnerStart()
                         isEnabledSave = false
                         billerViewModel.createSale(
                             createdSale,
-                            billerItems,
-                            payments,
+                            productItems,
+                            createdPayments,
                             onResponse = {
                                 savedSale = it
                                 navigationViewModel.loadSpinnerFinish()

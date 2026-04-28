@@ -5,8 +5,8 @@ import com.example.kramviapp.models.CreateIncidentItemModel
 import com.example.kramviapp.models.CreateIncidentModel
 import com.example.kramviapp.models.CreatePurchaseItemModel
 import com.example.kramviapp.models.CreatePurchaseModel
-import com.example.kramviapp.requests.IncidentInRequest
-import com.example.kramviapp.requests.IncidentOutRequest
+import com.example.kramviapp.requests.InIncidentRequest
+import com.example.kramviapp.requests.OutIncidentRequest
 import com.example.kramviapp.requests.PurchaseRequest
 import com.va6corporation.kramviapp.BuildConfig
 import okhttp3.OkHttpClient
@@ -79,13 +79,13 @@ class IncidentsViewModel: ViewModel() {
     }
 
     fun createIn(
-        incident: CreateIncidentModel,
-        incidentInItems: List<CreateIncidentItemModel>,
+        inIncident: CreateIncidentModel,
+        inIncidentItems: List<CreateIncidentItemModel>,
         onResponse: () -> Unit,
         onFailure: (String) -> Unit,
     ) {
-        val incidentInRequest = IncidentInRequest(incident, incidentInItems)
-        incidentsService.createIn(incidentInRequest).enqueue(object: Callback<Unit> {
+        val inIncidentRequest = InIncidentRequest(inIncident, inIncidentItems)
+        incidentsService.createIn(inIncidentRequest).enqueue(object: Callback<Unit> {
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                 if (response.isSuccessful) {
                     onResponse()
@@ -103,13 +103,13 @@ class IncidentsViewModel: ViewModel() {
     }
 
     fun createOut(
-        incident: CreateIncidentModel,
-        incidentOutItems: List<CreateIncidentItemModel>,
+        outIncident: CreateIncidentModel,
+        outIncidentItems: List<CreateIncidentItemModel>,
         onResponse: () -> Unit,
         onFailure: (String) -> Unit,
     ) {
-        val incidentOutRequest = IncidentOutRequest(incident, incidentOutItems)
-        incidentsService.createOut(incidentOutRequest).enqueue(object: Callback<Unit> {
+        val outIncidentRequest = OutIncidentRequest(outIncident, outIncidentItems)
+        incidentsService.createOut(outIncidentRequest).enqueue(object: Callback<Unit> {
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                 if (response.isSuccessful) {
                     onResponse()

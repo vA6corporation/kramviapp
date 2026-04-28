@@ -2,7 +2,7 @@ package com.example.kramviapp.biller
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import com.example.kramviapp.models.BillerItemModel
+import com.example.kramviapp.models.ProductItemModel
 import com.example.kramviapp.models.CreatePaymentModel
 import com.example.kramviapp.models.CreateSaleModel
 import com.example.kramviapp.models.SaleModel
@@ -21,34 +21,34 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class BillerViewModel: ViewModel() {
 
-    private val _billerItems: MutableStateFlow<MutableList<BillerItemModel>> = MutableStateFlow(
+    private val _productItems: MutableStateFlow<MutableList<ProductItemModel>> = MutableStateFlow(
         mutableStateListOf()
     )
-    val billerItems = _billerItems.asStateFlow()
+    val productItems = _productItems.asStateFlow()
 
-    fun addBillerItem(billerItem: BillerItemModel) {
-        val billerItems = _billerItems.value.toMutableList()
-        billerItems.add(billerItem)
-        _billerItems.value = billerItems
+    fun addProductItem(billerItem: ProductItemModel) {
+        val productItems = _productItems.value.toMutableList()
+        productItems.add(billerItem)
+        _productItems.value = productItems
     }
 
-    fun updateBillerItem(index: Int, billerItem: BillerItemModel) {
-        _billerItems.value[index] = _billerItems.value[index].copy(
-            fullName = billerItem.fullName,
-            quantity = billerItem.quantity,
-            price = billerItem.price,
-            igvCode = billerItem.igvCode
+    fun updateProductItem(index: Int, productItem: ProductItemModel) {
+        _productItems.value[index] = _productItems.value[index].copy(
+            fullName = productItem.fullName,
+            quantity = productItem.quantity,
+            price = productItem.price,
+            igvCode = productItem.igvCode
         )
     }
 
-    fun removeBillerItem(index: Int) {
-        val billerItems = _billerItems.value.toMutableList()
-        billerItems.removeAt(index)
-        _billerItems.value = billerItems
+    fun removeProductItem(index: Int) {
+        val productItems = _productItems.value.toMutableList()
+        productItems.removeAt(index)
+        _productItems.value = productItems
     }
 
-    fun removeAllBillerItems() {
-        _billerItems.value = mutableStateListOf()
+    fun removeAllProductItems() {
+        _productItems.value = mutableStateListOf()
     }
 
     private val retrofit = Retrofit.Builder()
@@ -87,12 +87,12 @@ class BillerViewModel: ViewModel() {
 
     fun createSale(
         sale: CreateSaleModel,
-        saleItems: List<BillerItemModel>,
+        productItems: List<ProductItemModel>,
         payments: List<CreatePaymentModel>,
         onResponse: (SaleModel) -> Unit,
         onFailure: (String) -> Unit,
     ) {
-        val billerRequest = BillerRequest(sale, saleItems, payments, listOf())
+        val billerRequest = BillerRequest(sale, productItems, payments, listOf())
         billerService.createSale(billerRequest).enqueue(object: Callback<SaleModel> {
             override fun onResponse(call: Call<SaleModel>, response: Response<SaleModel>) {
                 if (response.isSuccessful) {

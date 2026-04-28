@@ -12,6 +12,10 @@ class NavigationViewModel: ViewModel() {
     val title = _title.asStateFlow()
     fun setTitle(title: String) { _title.value = title }
 
+    private val _pathActionButton = MutableStateFlow("")
+    val pathActionButton = _pathActionButton.asStateFlow()
+    fun setPathActionButton(pathActionButton: String) { _pathActionButton.value = pathActionButton }
+
     private val _message: MutableStateFlow<String?> = MutableStateFlow(null)
     val message = _message.asStateFlow()
     fun showMessage(message: String) { _message.value = message }

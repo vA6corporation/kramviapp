@@ -1,5 +1,6 @@
 package com.example.kramviapp.posBoard
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -56,9 +57,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.kramviapp.boards.BoardsViewModel
+import com.example.kramviapp.boards.DeleteBoardDialog
 import com.example.kramviapp.boards.TablesViewModel
 import com.example.kramviapp.categories.CategoriesViewModel
-import com.example.kramviapp.charge.OutStockDialog
 import com.example.kramviapp.enums.IgvCodeType
 import com.example.kramviapp.enums.PriceType
 import com.example.kramviapp.enums.PrintZoneType
@@ -68,7 +69,6 @@ import com.example.kramviapp.models.ActionModel
 import com.example.kramviapp.models.BoardItemModel
 import com.example.kramviapp.models.BoardModel
 import com.example.kramviapp.models.NavigateTo
-import com.example.kramviapp.models.OutStockModel
 import com.example.kramviapp.models.ProductModel
 import com.example.kramviapp.models.SaleItemModel
 import com.example.kramviapp.models.TableModel
@@ -88,6 +88,7 @@ import com.example.kramviapp.ui.theme.LightGreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@SuppressLint("DefaultLocale")
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PosBoardPortraitScreen(
@@ -137,12 +138,10 @@ fun PosBoardPortraitScreen(
     var board: BoardModel? by remember { mutableStateOf(null) }
     var expandedPriceList by remember { mutableStateOf(false) }
     var priceListId by remember { mutableStateOf(setting.defaultPriceListId) }
-    var showOutStockDialog by remember { mutableStateOf(false) }
     var showPasswordBoardDialog by remember { mutableStateOf(false) }
     var showPasswordBoardItemDialog by remember { mutableStateOf(false) }
     var showPasswordUpdateBoardItemDialog by remember { mutableStateOf(false) }
     var showSelectionAnnotationsDialog by remember { mutableStateOf(false) }
-    var outStocks: List<OutStockModel> by remember { mutableStateOf(listOf()) }
     var printers: List<PrinterModel> by remember { mutableStateOf(listOf()) }
 
     ProductsViewModel.setPrices(products, priceListId, office, setting)
@@ -386,11 +385,13 @@ fun PosBoardPortraitScreen(
                 }
             }
         }
+
         if (it == "change_board") {
             board?.let { board ->
                 navigationViewModel.onNavigateTo(NavigateTo("changeBoard/${board.id}"))
             }
         }
+
         if (it == "delete_board") {
             if (setting.password.isEmpty()) {
                 showConfirmBoardDialog = true
@@ -455,21 +456,7 @@ fun PosBoardPortraitScreen(
             setting = setting,
             onSuccessRequest = {
                 showPasswordBoardDialog = false
-                board?.let { board ->
-                    navigationViewModel.loadBarStart()
-                    boardsViewModel.deleteBoard(
-                        board.id,
-                        onResponse = {
-                            navigationViewModel.loadBarFinish()
-                            navigationViewModel.onNavigateTo(NavigateTo("boards"))
-                            navigationViewModel.showMessage("Mesa anulada correctamente")
-                        },
-                        onFailure = {
-                            navigationViewModel.loadBarFinish()
-                            navigationViewModel.showMessage(it)
-                        }
-                    )
-                }
+                showConfirmBoardDialog = true
             },
             onDismissRequest = {
                 showPasswordBoardDialog = false
@@ -554,12 +541,6 @@ fun PosBoardPortraitScreen(
         }
     }
 
-    if (showOutStockDialog) {
-        OutStockDialog(outStocks = outStocks) {
-            showOutStockDialog = false
-        }
-    }
-
     if (showBoardItemDialog) {
         val boardItem = boardItems[boardItemIndex]
         BoardItemDialog(
@@ -592,15 +573,13 @@ fun PosBoardPortraitScreen(
 
     if (showConfirmBoardDialog) {
         board?.let { board ->
-            ConfirmDialog(
-                onDismissRequest = {
-                    showConfirmBoardDialog = false
-                },
-                onConfirmation = {
+            DeleteBoardDialog(
+                onSuccessRequest = { observation ->
                     showConfirmBoardDialog = false
                     navigationViewModel.loadBarStart()
                     boardsViewModel.deleteBoard(
                         board.id,
+                        observation,
                         onResponse = {
                             navigationViewModel.loadBarFinish()
                             navigationViewModel.onNavigateTo(NavigateTo("boards"))
@@ -612,7 +591,9 @@ fun PosBoardPortraitScreen(
                         }
                     )
                 },
-                dialogText = "Esta seguro de anular la mesa?..."
+                onDismissRequest = {
+                    showConfirmBoardDialog = false
+                }
             )
         }
     }
@@ -978,6 +959,7 @@ fun PosBoardPortraitScreen(
                                 val saleItem = SaleItemModel(
                                     fullName = boardItem.fullName,
                                     price = boardItem.price,
+                                    cost = boardItem.cost,
                                     quantity = boardItem.quantity,
                                     igvCode = boardItem.igvCode,
                                     preIgvCode = boardItem.igvCode,
