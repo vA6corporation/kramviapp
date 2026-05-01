@@ -13,7 +13,7 @@ android {
         applicationId = "com.va6corporation.kramviapp"
         minSdk = 24
         targetSdk = 35
-        versionCode = 46
+        versionCode = 47
         versionName = "5.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

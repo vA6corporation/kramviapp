@@ -63,7 +63,7 @@ import com.example.kramviapp.enums.IgvCodeType
 import com.example.kramviapp.enums.PriceType
 import com.example.kramviapp.login.LoginViewModel
 import com.example.kramviapp.models.ActionModel
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.models.ProductModel
 import com.example.kramviapp.navigation.ConfirmDialog
 import com.example.kramviapp.navigation.NavigationViewModel
@@ -99,7 +99,7 @@ fun ProformarLandscapeScreen(
     val proformaItems by proformaItemsViewModel.proformaItems.collectAsState()
 
     if (business.isDebtorCancel) {
-        navigationViewModel.onNavigateTo(NavigateTo("subscription"))
+        navigationViewModel.onGoTo(GoTo("subscription"))
     }
 
     val pagerState = rememberPagerState { 3 }
@@ -503,7 +503,7 @@ fun ProformarLandscapeScreen(
                 Spacer(modifier = Modifier.width(5.dp))
                 Button(
                     onClick = {
-                        navigationViewModel.onNavigateTo(NavigateTo("charge/proforma"))
+                        navigationViewModel.onGoTo(GoTo("charge/proforma"))
                     },
                 ) {
                     Text(text = "GUARDAR")

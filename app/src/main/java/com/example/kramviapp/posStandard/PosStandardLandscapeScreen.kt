@@ -65,7 +65,7 @@ import com.example.kramviapp.enums.IgvCodeType
 import com.example.kramviapp.enums.PriceType
 import com.example.kramviapp.login.LoginViewModel
 import com.example.kramviapp.models.ActionModel
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.models.ProductModel
 import com.example.kramviapp.navigation.ConfirmDialog
 import com.example.kramviapp.navigation.NavigationViewModel
@@ -105,7 +105,7 @@ fun PosStandardLandscapeScreen(
     val saleItems by saleItemsViewModel.saleItems.collectAsState()
 
     if (business.isDebtorCancel) {
-        navigationViewModel.onNavigateTo(NavigateTo("subscription"))
+        navigationViewModel.onGoTo(GoTo("subscription"))
     }
 
     val pagerState = rememberPagerState { 3 }
@@ -569,7 +569,7 @@ fun PosStandardLandscapeScreen(
                 if (setting.isShowCredit) {
                     Button(
                         onClick = {
-                            navigationViewModel.onNavigateTo(NavigateTo("chargeCredit/posStandard"))
+                            navigationViewModel.onGoTo(GoTo("chargeCredit/posStandard"))
                         },
                     ) {
                         Text(text = "CREDITO")
@@ -578,7 +578,7 @@ fun PosStandardLandscapeScreen(
                 }
                 Button(
                     onClick = {
-                        navigationViewModel.onNavigateTo(NavigateTo("charge/posStandard"))
+                        navigationViewModel.onGoTo(GoTo("charge/posStandard"))
                     },
                 ) {
                     Text(text = "COBRAR")

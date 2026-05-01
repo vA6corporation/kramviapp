@@ -61,7 +61,7 @@ import com.example.kramviapp.enums.IgvCodeType
 import com.example.kramviapp.enums.PriceType
 import com.example.kramviapp.login.LoginViewModel
 import com.example.kramviapp.models.ActionModel
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.models.ProductModel
 import com.example.kramviapp.navigation.ConfirmDialog
 import com.example.kramviapp.navigation.NavigationViewModel
@@ -97,7 +97,7 @@ fun PosStandardPortraitScreen(
     val saleItems by saleItemsViewModel.saleItems.collectAsState()
 
     if (business.isDebtorCancel) {
-        navigationViewModel.onNavigateTo(NavigateTo("subscription"))
+        navigationViewModel.onGoTo(GoTo("subscription"))
     }
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
@@ -280,7 +280,7 @@ fun PosStandardPortraitScreen(
                             .height(55.dp)
                             .fillMaxWidth(0.5f)
                             .clickable {
-                                navigationViewModel.onNavigateTo(NavigateTo("saleItems"))
+                                navigationViewModel.onGoTo(GoTo("saleItems"))
                             },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -343,7 +343,7 @@ fun PosStandardPortraitScreen(
             }
         } else {
             Row(modifier = Modifier.clickable {
-                navigationViewModel.onNavigateTo(NavigateTo("saleItems"))
+                navigationViewModel.onGoTo(GoTo("saleItems"))
             }) {
                 Row(
                     modifier = Modifier
@@ -498,7 +498,7 @@ fun PosStandardPortraitScreen(
             if (setting.isShowCredit) {
                 Button(
                     onClick = {
-                        navigationViewModel.onNavigateTo(NavigateTo("chargeCredit/posStandard"))
+                        navigationViewModel.onGoTo(GoTo("chargeCredit/posStandard"))
                     },
                 ) {
                     Text(text = "CREDITO")
@@ -507,7 +507,7 @@ fun PosStandardPortraitScreen(
             }
             Button(
                 onClick = {
-                    navigationViewModel.onNavigateTo(NavigateTo("charge/posStandard"))
+                    navigationViewModel.onGoTo(GoTo("charge/posStandard"))
                 },
             ) {
                 Text(text = "COBRAR")

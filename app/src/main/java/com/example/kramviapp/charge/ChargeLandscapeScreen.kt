@@ -61,7 +61,7 @@ import com.example.kramviapp.models.ActionModel
 import com.example.kramviapp.models.CreatePaymentModel
 import com.example.kramviapp.models.CreateSaleModel
 import com.example.kramviapp.models.CreateTurnModel
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.models.SaleModel
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.openTurn.OpenTurnDialog
@@ -79,7 +79,7 @@ import com.example.kramviapp.utils.BuildInvoiceSharePdf
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChargeLandscapeScreen(
-    navigateTo: String,
+    goTo: String,
     boardId: Int?,
     database: AppDatabase,
     loginViewModel: LoginViewModel,
@@ -201,19 +201,19 @@ fun ChargeLandscapeScreen(
                     }
                     showChargeBottomSheet = false
                     saleItemsViewModel.removeAllSaleItems()
-                    navigationViewModel.onNavigateTo(NavigateTo(navigateTo, true))
+                    navigationViewModel.onGoTo(GoTo(goTo, true))
                 },
                 onShareRequest = {
                     val buildSharePdf = BuildInvoiceSharePdf(sale, saleItems, customer, office, business, setting, context)
                     buildSharePdf.sharePdf()
                     showChargeBottomSheet = false
                     saleItemsViewModel.removeAllSaleItems()
-                    navigationViewModel.onNavigateTo(NavigateTo(navigateTo, true))
+                    navigationViewModel.onGoTo(GoTo(goTo, true))
                 },
                 onDismissRequest = {
                     showChargeBottomSheet = false
                     saleItemsViewModel.removeAllSaleItems()
-                    navigationViewModel.onNavigateTo(NavigateTo(navigateTo, true))
+                    navigationViewModel.onGoTo(GoTo(goTo, true))
                 }
             )
         }

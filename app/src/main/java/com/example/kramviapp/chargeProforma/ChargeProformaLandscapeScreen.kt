@@ -57,7 +57,7 @@ import com.example.kramviapp.enums.PrinterType
 import com.example.kramviapp.login.LoginViewModel
 import com.example.kramviapp.models.ActionModel
 import com.example.kramviapp.models.CreateProformaModel
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.models.ProformaModel
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.printers.PrinterProforma58
@@ -180,19 +180,19 @@ fun ChargeProformaLandscapeScreen(
                     }
                     showChargeProformaBottomSheet = false
                     proformaItemsViewModel.removeAllProformaItems()
-                    navigationViewModel.onNavigateTo(NavigateTo("proformar", true))
+                    navigationViewModel.onGoTo(GoTo("proformar", true))
                 },
                 onShareRequest = {
                     val buildSharePdf = BuildProformaSharePdf(proforma, proformaItems, customer, office, business, setting, context)
                     buildSharePdf.sharePdf()
                     showChargeProformaBottomSheet = false
                     proformaItemsViewModel.removeAllProformaItems()
-                    navigationViewModel.onNavigateTo(NavigateTo("proformar", true))
+                    navigationViewModel.onGoTo(GoTo("proformar", true))
                 },
                 onDismissRequest = {
                     showChargeProformaBottomSheet = false
                     proformaItemsViewModel.removeAllProformaItems()
-                    navigationViewModel.onNavigateTo(NavigateTo("proformar", true))
+                    navigationViewModel.onGoTo(GoTo("proformar", true))
                 }
             )
         }

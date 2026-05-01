@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -26,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.ui.theme.KramviRed
 import com.example.kramviapp.ui.theme.LightBlue
@@ -77,7 +76,7 @@ fun BoardsScreen(
                         .padding(.3.dp)
                         .background(if (board == null) LightBlue else KramviRed)
                         .clickable {
-                            navigationViewModel.onNavigateTo(NavigateTo("posBoard/${index}/false"))
+                            navigationViewModel.onGoTo(GoTo("posBoard/${index}/false"))
                         },
                 ) {
                     Row(

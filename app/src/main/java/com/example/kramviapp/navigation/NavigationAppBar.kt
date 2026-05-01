@@ -47,7 +47,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,7 +102,7 @@ fun NavigationAppBar(
         floatingActionButton = {
             if (pathActionButton.isNotEmpty()) {
                 FloatingActionButton(
-                    onClick = { navigationViewModel.onNavigateTo(NavigateTo(pathActionButton)) },
+                    onClick = { navigationViewModel.onGoTo(GoTo(pathActionButton)) },
                 ) {
                     Icon(Icons.Filled.Add, "Floating action button.")
                 }

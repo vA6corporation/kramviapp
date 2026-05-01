@@ -57,7 +57,7 @@ import com.example.kramviapp.enums.IgvCodeType
 import com.example.kramviapp.enums.PriceType
 import com.example.kramviapp.login.LoginViewModel
 import com.example.kramviapp.models.ActionModel
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.navigation.ConfirmDialog
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.products.ProductsViewModel
@@ -88,7 +88,7 @@ fun PosFastFoodPortraitScreen(
     val saleItems by saleItemsViewModel.saleItems.collectAsState()
 
     if (business.isDebtorCancel) {
-        navigationViewModel.onNavigateTo(NavigateTo("subscription"))
+        navigationViewModel.onGoTo(GoTo("subscription"))
     }
 
     val pagerState = rememberPagerState { 2 }
@@ -430,7 +430,7 @@ fun PosFastFoodPortraitScreen(
             Spacer(modifier = Modifier.width(5.dp))
             Button(
                 onClick = {
-                    navigationViewModel.onNavigateTo(NavigateTo("charge/posFastFood"))
+                    navigationViewModel.onGoTo(GoTo("charge/posFastFood"))
                 },
             ) {
                 Text(text = "COBRAR")

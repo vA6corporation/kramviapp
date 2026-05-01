@@ -14,7 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.kramviapp.login.LoginViewModel
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.navigation.NavigationViewModel
 
 @Composable
@@ -25,7 +25,7 @@ fun BillerScreen(
     val business by loginViewModel.business.collectAsState()
 
     if (business.isDebtorCancel) {
-        navigationViewModel.onNavigateTo(NavigateTo("subscription"))
+        navigationViewModel.onGoTo(GoTo("subscription"))
     }
 
     LaunchedEffect(Unit) {
@@ -35,7 +35,7 @@ fun BillerScreen(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                navigationViewModel.onNavigateTo(NavigateTo("chargeBiller"))
+                navigationViewModel.onGoTo(GoTo("chargeBiller"))
             },
         ) {
             Text(text = "EMITIR AL CONTADO")
@@ -44,7 +44,7 @@ fun BillerScreen(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                navigationViewModel.onNavigateTo(NavigateTo("creditBiller"))
+                navigationViewModel.onGoTo(GoTo("creditBiller"))
             },
         ) {
             Text(text = "EMITIR AL CREDITO")

@@ -56,7 +56,7 @@ class LoginActivity : ComponentActivity() {
             val message by navigationViewModel.message.collectAsState()
             val isBarLoading by navigationViewModel.isBarLoading.collectAsState()
             val title by navigationViewModel.title.collectAsState()
-            val navigateTo by navigationViewModel.navigateTo.collectAsState()
+            val goTo by navigationViewModel.goTo.collectAsState()
 
             LaunchedEffect(Unit) {
                 val users = database.userDao().getAll()
@@ -72,9 +72,9 @@ class LoginActivity : ComponentActivity() {
                 }
             }
 
-            LaunchedEffect(navigateTo) {
-                navigateTo?.let {
-                    navigationViewModel.onNavigateTo(null)
+            LaunchedEffect(goTo) {
+                goTo?.let {
+                    navigationViewModel.onGoTo(null)
                     if (it.isNoBack) {
                         navController.navigate(it.path) {
                             popUpTo(0)

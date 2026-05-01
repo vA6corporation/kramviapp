@@ -1,7 +1,6 @@
 package com.example.kramviapp.products
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,7 +40,7 @@ import com.example.kramviapp.enums.IgvCodeType
 import com.example.kramviapp.enums.PriceType
 import com.example.kramviapp.login.LoginViewModel
 import com.example.kramviapp.models.CreateProductModel
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.models.PriceFieldModel
 import com.example.kramviapp.models.PriceModel
 import com.example.kramviapp.navigation.NavigationViewModel
@@ -466,7 +465,7 @@ fun CreateProductsScreen(
                     prices,
                     onResponse = {
                         navigationViewModel.loadBarFinish()
-                        navigationViewModel.onNavigateTo(NavigateTo("products"))
+                        navigationViewModel.onGoTo(GoTo("products"))
                         navigationViewModel.showMessage("Registrado correctamente")
                     },
                     onFailure = {

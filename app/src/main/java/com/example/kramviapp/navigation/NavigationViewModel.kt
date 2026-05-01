@@ -2,7 +2,7 @@ package com.example.kramviapp.navigation
 
 import androidx.lifecycle.ViewModel
 import com.example.kramviapp.models.ActionModel
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -48,9 +48,9 @@ class NavigationViewModel: ViewModel() {
     fun showBackTo() { _isBackTo.value = true }
     fun hideBackTo() { _isBackTo.value = false }
 
-    private val _navigateTo: MutableStateFlow<NavigateTo?> = MutableStateFlow(null)
-    val navigateTo = _navigateTo.asStateFlow()
-    fun onNavigateTo(navigateTo: NavigateTo?) { _navigateTo.value = navigateTo }
+    private val _goTo: MutableStateFlow<GoTo?> = MutableStateFlow(null)
+    val goTo = _goTo.asStateFlow()
+    fun onGoTo(goTo: GoTo?) { _goTo.value = goTo }
 
     private val _isShowSearch = MutableStateFlow(false)
     val isShowSearch = _isShowSearch.asStateFlow()

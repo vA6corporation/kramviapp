@@ -25,7 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.kramviapp.login.LoginViewModel
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.ui.theme.LightBlue
 
@@ -49,7 +49,7 @@ fun HomeScreen(
                         .padding(.3.dp)
                         .background(LightBlue)
                         .clickable {
-                           navigationViewModel.onNavigateTo(NavigateTo(it.path))
+                           navigationViewModel.onGoTo(GoTo(it.path))
                         },
                     contentAlignment = Alignment.Center,
                 ) {
@@ -68,7 +68,7 @@ fun HomeScreen(
                             .padding(.3.dp)
                             .background(LightBlue)
                             .clickable {
-                                navigationViewModel.onNavigateTo(NavigateTo("logout"))
+                                navigationViewModel.onGoTo(GoTo("logout"))
                             },
                         contentAlignment = Alignment.Center,
                     ) {

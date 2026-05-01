@@ -24,7 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.ui.theme.LightBlue
 import androidx.compose.foundation.lazy.grid.items
@@ -78,7 +78,7 @@ fun ChangeBoardsScreen(
                                    table.id,
                                    onResponse = {
                                        navigationViewModel.loadBarFinish()
-                                       navigationViewModel.onNavigateTo(NavigateTo("boards"))
+                                       navigationViewModel.onGoTo(GoTo("boards"))
                                        navigationViewModel.showMessage("Se han guardado los cambios")
                                    },
                                    onFailure = {

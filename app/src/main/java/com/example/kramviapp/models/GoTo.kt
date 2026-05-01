@@ -1,6 +1,6 @@
 package com.example.kramviapp.models
 
-data class NavigateTo(
+data class GoTo(
     val path: String,
     val isNoBack: Boolean = false
 )

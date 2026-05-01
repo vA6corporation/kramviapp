@@ -27,7 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.kramviapp.MainActivity
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.room.AppDatabase
 import com.example.kramviapp.room.UserModel
@@ -100,9 +100,9 @@ fun SetOfficeScreen(
         FilledTonalButton(
             onClick = {
                 if (users.isNotEmpty()) {
-                    navigationViewModel.onNavigateTo(NavigateTo("setUser"))
+                    navigationViewModel.onGoTo(GoTo("setUser"))
                 } else {
-                    navigationViewModel.onNavigateTo(NavigateTo("login"))
+                    navigationViewModel.onGoTo(GoTo("login"))
                 }
             },
             modifier = Modifier.fillMaxWidth()

@@ -68,7 +68,7 @@ import com.example.kramviapp.login.LoginViewModel
 import com.example.kramviapp.models.ActionModel
 import com.example.kramviapp.models.BoardItemModel
 import com.example.kramviapp.models.BoardModel
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.models.ProductModel
 import com.example.kramviapp.models.SaleItemModel
 import com.example.kramviapp.models.TableModel
@@ -116,7 +116,7 @@ fun PosBoardPortraitScreen(
     val user by loginViewModel.user.collectAsState()
 
     if (business.isDebtorCancel) {
-        navigationViewModel.onNavigateTo(NavigateTo("subscription"))
+        navigationViewModel.onGoTo(GoTo("subscription"))
     }
 
     val pagerState = rememberPagerState { 2 }
@@ -388,7 +388,7 @@ fun PosBoardPortraitScreen(
 
         if (it == "change_board") {
             board?.let { board ->
-                navigationViewModel.onNavigateTo(NavigateTo("changeBoard/${board.id}"))
+                navigationViewModel.onGoTo(GoTo("changeBoard/${board.id}"))
             }
         }
 
@@ -430,16 +430,8 @@ fun PosBoardPortraitScreen(
         actions.add(ActionModel("search", "Buscar", Icons.Default.Search, false))
         actions.add(ActionModel("print_preaccount", "Imprimir precuenta", Icons.Default.Print))
         actions.add(ActionModel("print_command", "Imprimir comanda", Icons.Default.Print))
-        actions.add(
-            ActionModel(
-                "print_command_all",
-                "Imprimir comanda completa",
-                Icons.Default.Print
-            )
-        )
-        if (!isWaiter) {
-            actions.add(ActionModel("change_board", "Cambiar mesa", Icons.Default.NorthEast))
-        }
+        actions.add(ActionModel("print_command_all", "Imprimir comanda completa", Icons.Default.Print))
+        actions.add(ActionModel("change_board", "Cambiar mesa", Icons.Default.NorthEast))
         actions.add(ActionModel("delete_board", "Anular mesa", Icons.Default.Delete))
         navigationViewModel.setActions(actions)
         scrollState.animateScrollBy(10000f)
@@ -582,7 +574,7 @@ fun PosBoardPortraitScreen(
                         observation,
                         onResponse = {
                             navigationViewModel.loadBarFinish()
-                            navigationViewModel.onNavigateTo(NavigateTo("boards"))
+                            navigationViewModel.onGoTo(GoTo("boards"))
                             navigationViewModel.showMessage("Mesa anulada correctamente")
                         },
                         onFailure = {
@@ -931,9 +923,9 @@ fun PosBoardPortraitScreen(
                                 )
                                 navigationViewModel.loadBarFinish()
                                 if (isWaiter) {
-                                    navigationViewModel.onNavigateTo(NavigateTo("boardsWaiter"))
+                                    navigationViewModel.onGoTo(GoTo("boardsWaiter"))
                                 } else {
-                                    navigationViewModel.onNavigateTo(NavigateTo("boards"))
+                                    navigationViewModel.onGoTo(GoTo("boards"))
                                 }
                                 navigationViewModel.showMessage("Se han guardado los cambios")
                             },
@@ -972,7 +964,7 @@ fun PosBoardPortraitScreen(
                                 saleItems.add(saleItem)
                             }
                             saleItemsViewModel.setSaleItems(saleItems)
-                            navigationViewModel.onNavigateTo(NavigateTo("charge/boards?boardId=${board.id}"))
+                            navigationViewModel.onGoTo(GoTo("charge/boards?boardId=${board.id}"))
                         }
                     },
                 ) {

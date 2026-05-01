@@ -42,7 +42,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.kramviapp.MainActivity
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.room.AppDatabase
 import com.example.kramviapp.room.UserModel
@@ -132,7 +132,7 @@ fun LoginScreen(
                                     database.userDao().insert(user)
                                 }
                                 if (it.office == null) {
-                                    navigationViewModel.onNavigateTo(NavigateTo("setOffice"))
+                                    navigationViewModel.onGoTo(GoTo("setOffice"))
                                 } else {
                                     val intent = Intent(context, MainActivity::class.java)
                                     context.startActivity(intent)

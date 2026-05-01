@@ -70,7 +70,7 @@ import com.example.kramviapp.login.LoginViewModel
 import com.example.kramviapp.models.ActionModel
 import com.example.kramviapp.models.BoardItemModel
 import com.example.kramviapp.models.BoardModel
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.models.ProductModel
 import com.example.kramviapp.models.SaleItemModel
 import com.example.kramviapp.models.TableModel
@@ -118,7 +118,7 @@ fun PosBoardLandscapeScreen(
     val user by loginViewModel.user.collectAsState()
 
     if (business.isDebtorCancel) {
-        navigationViewModel.onNavigateTo(NavigateTo("subscription"))
+        navigationViewModel.onGoTo(GoTo("subscription"))
     }
 
     val pagerState = rememberPagerState { 2 }
@@ -372,7 +372,7 @@ fun PosBoardLandscapeScreen(
         }
         if (it == "change_board") {
             board?.let { board ->
-                navigationViewModel.onNavigateTo(NavigateTo("changeBoard/${board.id}"))
+                navigationViewModel.onGoTo(GoTo("changeBoard/${board.id}"))
             }
         }
         if (it == "delete_board") {
@@ -557,7 +557,7 @@ fun PosBoardLandscapeScreen(
                         observation,
                         onResponse = {
                             navigationViewModel.loadBarFinish()
-                            navigationViewModel.onNavigateTo(NavigateTo("boards"))
+                            navigationViewModel.onGoTo(GoTo("boards"))
                             navigationViewModel.showMessage("Mesa anulada correctamente")
                         },
                         onFailure = {
@@ -885,9 +885,9 @@ fun PosBoardLandscapeScreen(
                                     BoardsViewModel.printCommand(board, table, setting, user, printers)
                                     navigationViewModel.loadBarFinish()
                                     if (isWaiter) {
-                                        navigationViewModel.onNavigateTo(NavigateTo("boardsWaiter"))
+                                        navigationViewModel.onGoTo(GoTo("boardsWaiter"))
                                     } else {
-                                        navigationViewModel.onNavigateTo(NavigateTo("boards"))
+                                        navigationViewModel.onGoTo(GoTo("boards"))
                                     }
                                     navigationViewModel.showMessage("Se han guardado los cambios")
                                 },
@@ -926,7 +926,7 @@ fun PosBoardLandscapeScreen(
                                     saleItems.add(saleItem)
                                 }
                                 saleItemsViewModel.setSaleItems(saleItems)
-                                navigationViewModel.onNavigateTo(NavigateTo("charge/boards?boardId=${board.id}"))
+                                navigationViewModel.onGoTo(GoTo("charge/boards?boardId=${board.id}"))
                             }
                         },
                     ) {

@@ -66,6 +66,7 @@ import com.example.kramviapp.boards.BoardsWaiterScreen
 import com.example.kramviapp.boards.ChangeBoardsScreen
 import com.example.kramviapp.boards.TablesViewModel
 import com.example.kramviapp.categories.CategoriesViewModel
+import com.example.kramviapp.charge.ChargeCreditLandscapeScreen
 import com.example.kramviapp.charge.ChargeCreditPortraitScreen
 import com.example.kramviapp.charge.ChargeLandscapeScreen
 import com.example.kramviapp.charge.ChargePortraitScreen
@@ -215,7 +216,7 @@ class MainActivity : ComponentActivity() {
             val drawerState = rememberDrawerState(DrawerValue.Closed)
             val isBarLoading by navigationViewModel.isBarLoading.collectAsState()
             val isSpinnerLoading by navigationViewModel.isSpinnerLoading.collectAsState()
-            val navigateTo by navigationViewModel.navigateTo.collectAsState()
+            val goTo by navigationViewModel.goTo.collectAsState()
             val isLostNetwork by navigationViewModel.isLostNetwork.collectAsState()
             val currentPath by navigationViewModel.currentPath.collectAsState()
             val profile by loginViewModel.profile.collectAsState()
@@ -254,9 +255,9 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            LaunchedEffect(navigateTo) {
-                navigateTo?.let {
-                    navigationViewModel.onNavigateTo(null)
+            LaunchedEffect(goTo) {
+                goTo?.let {
+                    navigationViewModel.onGoTo(null)
                     if (it.isNoBack) {
                         navController.navigate(it.path) {
                             popUpTo(0)
@@ -575,18 +576,18 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                                 composable(
-                                    "charge/{navigateTo}?boardId={boardId}",
+                                    "charge/{goTo}?boardId={boardId}",
                                     arguments = listOf(
                                         navArgument("boardId") { defaultValue = "" },
-                                        navArgument("navigateTo") { defaultValue = "" }
+                                        navArgument("goTo") { defaultValue = "" }
                                     )
                                 ) { backStackEntry ->
+                                    val boardId = backStackEntry.arguments?.getString("boardId")?.toIntOrNull()
                                     when (configuration.orientation) {
                                         Configuration.ORIENTATION_LANDSCAPE -> {
                                             ChargeLandscapeScreen(
-                                                backStackEntry.arguments?.getString("navigateTo")
-                                                    ?: "",
-                                                backStackEntry.arguments?.getInt("boardId"),
+                                                backStackEntry.arguments?.getString("goTo") ?: "",
+                                                boardId,
                                                 database,
                                                 loginViewModel,
                                                 navigationViewModel,
@@ -599,9 +600,8 @@ class MainActivity : ComponentActivity() {
 
                                         else -> {
                                             ChargePortraitScreen(
-                                                backStackEntry.arguments?.getString("navigateTo")
-                                                    ?: "",
-                                                backStackEntry.arguments?.getInt("boardId"),
+                                                backStackEntry.arguments?.getString("goTo") ?: "",
+                                                boardId,
                                                 database,
                                                 loginViewModel,
                                                 navigationViewModel,
@@ -615,18 +615,18 @@ class MainActivity : ComponentActivity() {
                                 }
 
                                 composable(
-                                    "chargeCredit/{navigateTo}?boardId={boardId}",
+                                    "chargeCredit/{goTo}?boardId={boardId}",
                                     arguments = listOf(
                                         navArgument("boardId") { defaultValue = "" },
-                                        navArgument("navigateTo") { defaultValue = "" }
+                                        navArgument("goTo") { defaultValue = "" }
                                     )
                                 ) { backStackEntry ->
                                     when (configuration.orientation) {
                                         Configuration.ORIENTATION_LANDSCAPE -> {
-                                            ChargeLandscapeScreen(
-                                                backStackEntry.arguments?.getString("navigateTo")
+                                            ChargeCreditLandscapeScreen(
+                                                backStackEntry.arguments?.getString("goTo")
                                                     ?: "",
-                                                backStackEntry.arguments?.getInt("boardId"),
+                                                backStackEntry.arguments?.getString("boardId")?.toInt(),
                                                 database,
                                                 loginViewModel,
                                                 navigationViewModel,
@@ -639,9 +639,9 @@ class MainActivity : ComponentActivity() {
 
                                         else -> {
                                             ChargeCreditPortraitScreen(
-                                                backStackEntry.arguments?.getString("navigateTo")
+                                                backStackEntry.arguments?.getString("goTo")
                                                     ?: "",
-                                                backStackEntry.arguments?.getInt("boardId"),
+                                                backStackEntry.arguments?.getString("boardId")?.toInt(),
                                                 database,
                                                 loginViewModel,
                                                 navigationViewModel,

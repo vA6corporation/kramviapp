@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.kramviapp.MainActivity
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.navigation.ConfirmDialog
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.room.AppDatabase
@@ -68,7 +68,7 @@ fun SetUserScreen(
                         users = it
                     }
                     if (users.isEmpty()) {
-                        navigationViewModel.onNavigateTo(NavigateTo("login"))
+                        navigationViewModel.onGoTo(GoTo("login"))
                     }
                 }
             },
@@ -107,7 +107,7 @@ fun SetUserScreen(
                                     navigationViewModel.loadBarFinish()
                                     loginViewModel.setAccessToken(it.accessToken)
                                     if (it.office == null) {
-                                        navigationViewModel.onNavigateTo(NavigateTo("setOffice"))
+                                        navigationViewModel.onGoTo(GoTo("setOffice"))
                                     } else {
                                         val intent = Intent(context, MainActivity::class.java)
                                         context.startActivity(intent)
@@ -145,7 +145,7 @@ fun SetUserScreen(
         Button(
             enabled = enabledSubmit,
             onClick = {
-                navigationViewModel.onNavigateTo(NavigateTo("login"))
+                navigationViewModel.onGoTo(GoTo("login"))
             },
             modifier = Modifier.fillMaxWidth(),
         ) {

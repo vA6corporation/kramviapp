@@ -35,7 +35,7 @@ import com.example.kramviapp.models.CreateIncidentItemModel
 import com.example.kramviapp.models.CreateIncidentModel
 import com.example.kramviapp.models.CreatePurchaseItemModel
 import com.example.kramviapp.models.CreatePurchaseModel
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.models.ProductModel
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.navigation.PasswordDialog
@@ -127,7 +127,7 @@ fun InventoriesScreen(
                                 },
                                 onFailure = { message ->
                                     navigationViewModel.loadBarFinish()
-                                    navigationViewModel.onNavigateTo(NavigateTo("createProducts?upc=${upc}"))
+                                    navigationViewModel.onGoTo(GoTo("createProducts?upc=${upc}"))
                                 }
                             )
                         }

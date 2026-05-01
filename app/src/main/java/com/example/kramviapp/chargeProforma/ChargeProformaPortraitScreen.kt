@@ -50,7 +50,7 @@ import com.example.kramviapp.enums.PrinterType
 import com.example.kramviapp.login.LoginViewModel
 import com.example.kramviapp.models.ActionModel
 import com.example.kramviapp.models.CreateProformaModel
-import com.example.kramviapp.models.NavigateTo
+import com.example.kramviapp.models.GoTo
 import com.example.kramviapp.models.ProformaModel
 import com.example.kramviapp.navigation.NavigationViewModel
 import com.example.kramviapp.printers.PrinterProforma58
@@ -60,7 +60,6 @@ import com.example.kramviapp.proformaItems.ProformaItemsViewModel
 import com.example.kramviapp.proformas.ProformasViewModel
 import com.example.kramviapp.room.AppDatabase
 import com.example.kramviapp.room.PrinterModel
-import com.example.kramviapp.utils.BuildInvoiceSharePdf
 import com.example.kramviapp.utils.BuildProformaSharePdf
 
 @SuppressLint("DefaultLocale")
@@ -174,7 +173,7 @@ fun ChargeProformaPortraitScreen(
                     }
                     showChargeProformaBottomSheet = false
                     proformaItemsViewModel.removeAllProformaItems()
-                    navigationViewModel.onNavigateTo(NavigateTo("proformar", true))
+                    navigationViewModel.onGoTo(GoTo("proformar", true))
 
                 },
                 onShareRequest = {
@@ -190,13 +189,13 @@ fun ChargeProformaPortraitScreen(
                     buildSharePdf.sharePdf()
                     showChargeProformaBottomSheet = false
                     proformaItemsViewModel.removeAllProformaItems()
-                    navigationViewModel.onNavigateTo(NavigateTo("proformar", true))
+                    navigationViewModel.onGoTo(GoTo("proformar", true))
 
                 },
                 onDismissRequest = {
                     showChargeProformaBottomSheet = false
                     proformaItemsViewModel.removeAllProformaItems()
-                    navigationViewModel.onNavigateTo(NavigateTo("proformar", true))
+                    navigationViewModel.onGoTo(GoTo("proformar", true))
                 }
             )
         }
@@ -259,7 +258,7 @@ fun ChargeProformaPortraitScreen(
     }
     Column {
         Row(modifier = Modifier.clickable {
-            navigationViewModel.onNavigateTo(NavigateTo("proformaItems"))
+            navigationViewModel.onGoTo(GoTo("proformaItems"))
         }) {
             Row(
                 modifier = Modifier
