@@ -268,7 +268,7 @@ fun PosStandardPortraitScreen(
     }
 
     Column {
-        if (setting.defaultPrice == PriceType.LISTA || setting.defaultPrice == PriceType.LISTAOFICINA) {
+        if (setting.defaultPrice == PriceType.LISTA) {
             priceLists?.let { priceLists ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),

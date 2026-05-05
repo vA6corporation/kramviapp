@@ -539,7 +539,7 @@ fun PosBoardPortraitScreen(
             boardItem,
             onDeleteRequest = {
                 showBoardItemDialog = false
-                if (boardItem.id == 0) {
+                if (boardItem.id > 0) {
                     if (setting.password.isNotEmpty()) {
                         showPasswordBoardItemDialog = true
                     } else {
@@ -671,7 +671,7 @@ fun PosBoardPortraitScreen(
     }
 
     Column {
-        if (setting.defaultPrice == PriceType.LISTA || setting.defaultPrice == PriceType.LISTAOFICINA) {
+        if (setting.defaultPrice == PriceType.LISTA) {
             priceLists?.let { priceLists ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),

@@ -461,7 +461,7 @@ fun PosStandardLandscapeScreen(
             Modifier
                 .fillMaxHeight()
                 .background(Color.White)) {
-            if (setting.defaultPrice == PriceType.LISTA || setting.defaultPrice == PriceType.LISTAOFICINA) {
+            if (setting.defaultPrice == PriceType.LISTA) {
                 priceLists?.let { priceLists ->
                     ExposedDropdownMenuBox(
                         expanded = expandedPriceList,

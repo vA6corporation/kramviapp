@@ -8,10 +8,12 @@ data class CreateProductModel(
     val sku: String,
     val upc: String,
     val categoryId: Int,
-    var price: Double,
+    val price: Double,
+    val cost: Double?,
     val unitCode: String,
     val igvCode: IgvCodeType,
     val isTrackStock: Boolean,
-    val stock: Double,
-    val annotations: List<Unit>
+    val stock: Double?,
+    val annotations: List<Unit>,
+    val prices: List<PriceModel>
 )

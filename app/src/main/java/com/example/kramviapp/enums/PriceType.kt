@@ -13,7 +13,4 @@ enum class PriceType(type: String) {
     @SerializedName("LISTA")
     LISTA("LISTA"),
 
-    @SerializedName("LISTAOFICINA")
-    LISTAOFICINA("LISTAOFICINA"),
-
 }

@@ -68,7 +68,7 @@ fun InventoriesScreen(
     val clickMenu by navigationViewModel.clickMenu.collectAsState()
     var pageIndex by remember { mutableIntStateOf(0) }
     val pageSize by remember { mutableIntStateOf(20) }
-    var products: MutableList<ProductModel> = remember { mutableStateListOf() }
+    val products: MutableList<ProductModel> = remember { mutableStateListOf() }
     var upc by remember { mutableStateOf("") }
     var showProductBottomSheet by remember { mutableStateOf(false) }
     var showAddStockDialog by remember { mutableStateOf(false) }
@@ -122,6 +122,8 @@ fun InventoriesScreen(
                             productsViewModel.getProductsByKey(
                                 it,
                                 onResponse = { foundProducts ->
+                                    isFinish = true
+                                    products.clear()
                                     products.addAll(foundProducts)
                                     navigationViewModel.loadBarFinish()
                                 },

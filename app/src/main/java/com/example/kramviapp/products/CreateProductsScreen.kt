@@ -26,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -57,6 +58,7 @@ fun CreateProductsScreen(
     val categories by categoriesViewModel.categories.collectAsState()
     val setting by loginViewModel.setting.collectAsState()
     val offices by loginViewModel.offices.collectAsState()
+    val priceLists by productsViewModel.priceLists.collectAsState()
     val unitCodes = productsViewModel.unitCodes
 
     var upc by remember { mutableStateOf("") }
@@ -70,7 +72,7 @@ fun CreateProductsScreen(
     var igvCode by remember { mutableStateOf(IgvCodeType.GRAVADO) }
     var unitCode by remember { mutableStateOf("NIU") }
     var unitCodeName by remember { mutableStateOf("UNIDADES (Productos)") }
-    var priceFields: List<PriceFieldModel> by remember { mutableStateOf(listOf()) }
+    val priceFields: MutableList<PriceFieldModel> = remember { mutableStateListOf() }
 
     var isShowCreateCategoriesDialog by remember { mutableStateOf(false) }
 
@@ -102,11 +104,23 @@ fun CreateProductsScreen(
                     null,
                     null,
                 )
-                priceFields = listOf(priceField)
+                priceFields.addAll(listOf(priceField))
             }
 
             PriceType.LISTA -> {
-
+                val mutablePriceFields: MutableList<PriceFieldModel> = mutableListOf()
+                priceLists?.let { priceLists ->
+                    for (priceList in priceLists) {
+                        val priceField = PriceFieldModel(
+                            "precio ${priceList.name}",
+                            "",
+                            priceList.id,
+                            null,
+                        )
+                        mutablePriceFields.add(priceField)
+                    }
+                    priceFields.addAll(mutablePriceFields)
+                }
             }
 
             PriceType.OFICINA -> {
@@ -121,12 +135,8 @@ fun CreateProductsScreen(
                         )
                         mutablePriceFields.add(priceField)
                     }
-                    priceFields = mutablePriceFields.toList()
+                    priceFields.addAll(mutablePriceFields)
                 }
-            }
-
-            PriceType.LISTAOFICINA -> {
-
             }
         }
     }
@@ -139,24 +149,8 @@ fun CreateProductsScreen(
         if (offices == null) {
             loginViewModel.loadOfficesByActivity()
         }
-        innerUpc?.let { innerUpc ->
-            if (innerUpc.isNotEmpty()) {
-                upc = innerUpc
-                navigationViewModel.loadBarStart()
-                productsViewModel.getProductByUpcGlobal(
-                    innerUpc,
-                    onResponse = {
-                        navigationViewModel.loadBarFinish()
-                        name = it.fullName
-                        for (priceField in priceFields) {
-                            priceField.price = it.price.toString()
-                        }
-                    },
-                    onFailure = {
-                        navigationViewModel.loadBarFinish()
-                    }
-                )
-            }
+        if (priceLists == null) {
+            productsViewModel.getPriceLists()
         }
     }
 
@@ -428,41 +422,56 @@ fun CreateProductsScreen(
 
                 isEnabledSave = false
                 navigationViewModel.loadBarStart()
+
+                val prices: MutableList<PriceModel> = mutableListOf()
+
+                when (setting.defaultPrice) {
+                    PriceType.GLOBAL -> {
+                    }
+
+                    PriceType.LISTA -> {
+                        priceLists?.let { priceLists ->
+                            for (priceField in priceFields) {
+                                val price = PriceModel(
+                                    priceField.price.toDouble(),
+                                    priceField.priceListId,
+                                    null,
+                                )
+                                prices.add(price)
+                            }
+                        }
+                    }
+
+                    PriceType.OFICINA -> {
+                        priceLists?.let { priceLists ->
+                            for (priceField in priceFields) {
+                                val price = PriceModel(
+                                    priceField.price.toDouble(),
+                                    priceField.priceListId,
+                                    priceField.officeId,
+                                )
+                                prices.add(price)
+                            }
+                        }
+                    }
+                }
+
                 val product = CreateProductModel(
                     name,
                     sku,
                     upc,
                     categoryId,
                     priceFields[0].price.toDouble(),
+                    cost.toDoubleOrNull(),
                     unitCode,
                     igvCode,
                     isTrackStock,
-                    if (stock.isEmpty()) 0.0 else stock.toDouble(),
+                    stock.toDoubleOrNull(),
                     listOf(),
+                    prices.toList()
                 )
-                val mutablePrices: MutableList<PriceModel> = mutableListOf()
-                for (priceField in priceFields) {
-                    val price = PriceModel(
-                        priceField.price.toDouble(),
-                        priceField.priceListId,
-                        priceField.officeId
-                    )
-                    mutablePrices.add(price)
-                }
-                var prices: List<PriceModel> = listOf()
-                when (setting.defaultPrice) {
-                    PriceType.GLOBAL -> {
-
-                    }
-                    PriceType.LISTAOFICINA,
-                    PriceType.OFICINA,
-                    PriceType.LISTA -> {
-                        prices = mutablePrices.toList()
-                    }
-                }
                 productsViewModel.createProduct(
                     product,
-                    prices,
                     onResponse = {
                         navigationViewModel.loadBarFinish()
                         navigationViewModel.onGoTo(GoTo("products"))

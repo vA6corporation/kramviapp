@@ -79,13 +79,6 @@ class ProductsViewModel : ViewModel() {
                     }
                 }
 
-                PriceType.LISTAOFICINA -> {
-                    for (product in products) {
-                        val price =
-                            product.prices.find { it.priceListId == priceListId && it.officeId == office.id }
-                        price?.let { product.price = price.price }
-                    }
-                }
             }
         }
     }
@@ -134,31 +127,6 @@ class ProductsViewModel : ViewModel() {
             .build()
 
         productsService = retrofit.create(ProductsService::class.java)
-    }
-
-    fun getProductByUpcGlobal(
-        upc: String,
-        onResponse: (ProductModel) -> Unit,
-        onFailure: (String) -> Unit
-    ) {
-        productsService.getProductByUpcGlobal(upc).enqueue(object : Callback<ProductModel> {
-            override fun onResponse(call: Call<ProductModel>, response: Response<ProductModel>) {
-                if (response.isSuccessful) {
-                    response.body()?.let { product ->
-                        onResponse(product)
-                    }
-                } else {
-                    response.errorBody()?.let {
-                        val jsonObject = JSONObject(it.string())
-                        onFailure(jsonObject.getString("message"))
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<ProductModel>, t: Throwable) {
-                t.message?.let { onFailure(it) }
-            }
-        })
     }
 
     fun getFavorites() {
@@ -260,11 +228,10 @@ class ProductsViewModel : ViewModel() {
 
     fun createProduct(
         product: CreateProductModel,
-        prices: List<PriceModel>,
         onResponse: () -> Unit,
         onFailure: (String) -> Unit,
     ) {
-        val productRequest = ProductRequest(product, prices)
+        val productRequest = ProductRequest(product)
         productsService.createProduct(productRequest).enqueue(object : Callback<Unit> {
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                 if (response.isSuccessful) {

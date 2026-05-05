@@ -107,6 +107,7 @@ fun ProductsScreen(
                             productsViewModel.getProductsByKey(
                                 it,
                                 onResponse = { foundProducts ->
+                                    isFinish = true
                                     products = foundProducts
                                     navigationViewModel.loadBarFinish()
                                 },

@@ -1,5 +1,6 @@
 package com.example.kramviapp.posFood
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -68,6 +69,7 @@ import com.example.kramviapp.ui.theme.LightGreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PosFastFoodPortraitScreen(
@@ -192,7 +194,7 @@ fun PosFastFoodPortraitScreen(
         }
     }
     Column {
-        if (setting.defaultPrice == PriceType.LISTA || setting.defaultPrice == PriceType.LISTAOFICINA) {
+        if (setting.defaultPrice == PriceType.LISTA) {
             priceLists?.let { priceLists ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
